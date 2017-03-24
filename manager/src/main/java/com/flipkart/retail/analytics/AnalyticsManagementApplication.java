@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.flipkart.retail.analytics.config.AnalyticsConfiguration;
+import com.flipkart.retail.analytics.config.AnalyticsModule;
 import com.google.common.collect.Sets;
 import com.google.inject.Stage;
 import com.hubspot.dropwizard.guice.GuiceBundle;
+import com.palominolabs.metrics.guice.MetricsInstrumentationModule;
+import fk.sp.common.extensions.dropwizard.elb.config.ElbHealthcheckModule;
+import fk.sp.common.extensions.dropwizard.jersey.JerseyClientModule;
 import fk.sp.common.extensions.dropwizard.jersey.LoggingFilter;
 import fk.sp.common.extensions.guice.jpa.spring.JpaWithSpringModule;
 import fk.sp.common.extensions.swagger.SwaggerBundle;
@@ -38,6 +42,10 @@ public class AnalyticsManagementApplication extends Application<AnalyticsConfigu
 
         this.guiceBundle = GuiceBundle.<AnalyticsConfiguration>newBuilder()
                 .setConfigClass(AnalyticsConfiguration.class)
+                .addModule(new AnalyticsModule())
+                .addModule(new JerseyClientModule())
+                .addModule(new ElbHealthcheckModule())
+                .addModule(new MetricsInstrumentationModule(bootstrap.getMetricRegistry()))
                 .addModule(new JpaWithSpringModule(
                         Sets.newHashSet(
                                 "com.flipkart.retail.analytics"
