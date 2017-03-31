@@ -1,6 +1,11 @@
 package com.flipkart.retail.analytics.config;
 
+import com.flipkart.retail.analytics.persistence.AggregatedPaymentsManager;
+import com.flipkart.retail.analytics.persistence.PaymentsManager;
+import com.flipkart.retail.analytics.persistence.impl.AggregatedPaymentsManagerImpl;
+import com.flipkart.retail.analytics.persistence.impl.PaymentsManagerImpl;
 import com.flipkart.retail.analytics.resources.AggregatorResource;
+import com.flipkart.retail.analytics.resources.PaymentResource;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -33,14 +38,14 @@ public class AnalyticsModule extends AbstractModule {
 
 
     bind(HasDataSourceFactory.class).to(AnalyticsConfiguration.class);
-    bind(AggregatorResource.class).in(Singleton.class);
 
     //resource binding
     bind(AggregatorResource.class).in(Singleton.class);
+    bind(PaymentResource.class).in(Singleton.class);
 
     //interface and implementation binding
-    //    bind(VendorMaster.class).to(VendorMasterImpl.class);
-    //    bind(TermPersistenceManager.class).to(TermPersistenceManagerImpl.class).in(Singleton.class);
+        bind(PaymentsManager.class).to(PaymentsManagerImpl.class).in(Singleton.class);
+        bind(AggregatedPaymentsManager.class).to(AggregatedPaymentsManagerImpl.class).in(Singleton.class);
 
 
 

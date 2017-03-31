@@ -19,3 +19,7 @@ include 'services:webservice'
 rootProject.name = 'retail-analytics'
 include 'manager'
 
+include 'aggregated-data'
+
+include 'data-model'
+

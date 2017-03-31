@@ -98,6 +98,7 @@ project(':manager') {
     apply plugin: 'java'
 
     dependencies {
+
     }
 
     test {
