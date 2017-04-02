@@ -5,23 +5,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Builder
 @Getter
 @Setter
-public class VendorSiteYearlyPaymentRecord {
+public class VendorSitePaymentsDetails {
 
+    private String vendorSiteId;
 
-    private List<String> vendorSiteId;
-
-    private String startYear;
-
-    private String endYear;
+    private BigDecimal amount;
 
     private Currencies currency;
 
-    private BigDecimal amount;
+    private String paymentDate;
 }

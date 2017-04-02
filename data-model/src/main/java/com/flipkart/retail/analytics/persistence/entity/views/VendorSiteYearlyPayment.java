@@ -14,4 +14,6 @@ public class VendorSiteYearlyPayment {
 
     private BigDecimal amount;
 
+    private String currency;
+
 }
