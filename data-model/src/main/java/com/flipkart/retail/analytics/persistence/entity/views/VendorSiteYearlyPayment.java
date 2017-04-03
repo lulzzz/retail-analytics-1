@@ -1,19 +1,23 @@
 package com.flipkart.retail.analytics.persistence.entity.views;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class VendorSiteYearlyPayment {
 
-    private String vendorSiteId;
+    @Id
+    String vendorSiteId;
 
-    private BigDecimal amount;
+    BigDecimal amount;
 
-    private String currency;
+    String currency;
 
 }

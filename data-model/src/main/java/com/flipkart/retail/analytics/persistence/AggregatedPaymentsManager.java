@@ -9,5 +9,4 @@ import java.util.Optional;
 
 public interface AggregatedPaymentsManager  extends JpaGenericRepository<AggregatedPayment, Long> {
 
-    Optional<List<VendorSiteYearlyPayment>> getPaymentByVendorSites(List<String> vendorSites, String start, String end);
 }

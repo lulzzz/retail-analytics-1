@@ -9,10 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "aggregated_payments")
 @XmlRootElement
-@NamedQueries({
-        @NamedQuery(name="findPaymentsByVendorSiteIds",
-                query ="select a.vendorSiteId, ROUND(sum(a.amount),3) from AggregatedPayment a where a.vendorSiteId in (:vendorSiteIds) and (a.month between :startDate and :endDate) group by a.vendorSiteId")
-})
 @Setter
 @Getter
 @Builder

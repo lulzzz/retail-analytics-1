@@ -21,13 +21,14 @@ public class AggregatedPaymentsManagerImpl extends SimpleJpaGenericRepository<Ag
         super(entityManagerProvider);
     }
 
-    @Override
-    public Optional<List<VendorSiteYearlyPayment>> getPaymentByVendorSites(List<String> vendorSiteIds, String startYear, String endYear) {
-
-       Query query = getEntityManager().createNamedQuery("AggregatedPayment.findPaymentsByVendorSiteIds")
-               .setParameter("vendorSiteIds", vendorSiteIds)
-               .setParameter("startDate",startYear)
-                .setParameter("endDate", endYear);
-          return Optional.of(query.getResultList());
-    }
+//    @Override
+//    public Optional<AggregatedPayment> getPaymentByVendorSites(List<String> vendorSiteIds, String startYear, String endYear) {
+//
+//       Query query = getEntityManager().createNamedQuery("findPaymentsByVendorSiteIds")
+//               .setParameter("vendorSiteIds", vendorSiteIds)
+//               .setParameter("startDate",startYear)
+//                .setParameter("endDate", endYear);
+//
+//          return Optional.of(query.getResultList());
+//    }
 }

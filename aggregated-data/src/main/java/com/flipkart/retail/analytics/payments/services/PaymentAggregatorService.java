@@ -4,10 +4,9 @@ import com.flipkart.retail.analytics.common.YearClassifier;
 import com.flipkart.retail.analytics.payments.dto.response.VendorSiteYearlyPaymentRecord;
 import com.flipkart.retail.analytics.persistence.AggregatedPaymentsManager;
 import com.flipkart.retail.analytics.persistence.entity.views.VendorSiteYearlyPayment;
-import com.flipkart.retail.analytics.persistence.impl.AggregatedPaymentsManagerImpl;
+import com.flipkart.retail.analytics.persistence.impl.NativeManagerImpl;
 import com.flipkart.retail.analytics.persistence.utility.Currencies;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +21,10 @@ import java.util.Optional;
 public class PaymentAggregatorService {
 
     private final AggregatedPaymentsManager aggregatedPaymentsManager;
+    private final NativeManagerImpl nativeManager;
 
+    @Transactional
     public VendorSiteYearlyPaymentRecord getLastYearPaymentDetails(List<String> vendorSiteIds, YearClassifier yearClassifier) {
-        BigDecimal totalPayment = null;
         String startYear = String.valueOf(DateTime.now().getYear()-1);
         String endYear = String.valueOf(DateTime.now().getYear()) ;
 
@@ -36,20 +36,20 @@ public class PaymentAggregatorService {
             startYear = startYear.concat("01");
             endYear = endYear.concat("01");
         }
+
+        VendorSiteYearlyPaymentRecord vendorSiteYearlyPaymentRecord = new VendorSiteYearlyPaymentRecord();
+        vendorSiteYearlyPaymentRecord.setVendorSiteId(vendorSiteIds);
+        vendorSiteYearlyPaymentRecord.setStartYear(startYear);
+        vendorSiteYearlyPaymentRecord.setEndYear(endYear);
+
         Optional<List<VendorSiteYearlyPayment>> aggregatedPayments = getYearlyPaymentByVs(vendorSiteIds, startYear, endYear);
         if(aggregatedPayments.isPresent()) {
-           totalPayment =  aggregatedPayments.get().stream()
-                                    .map(VendorSiteYearlyPayment::getAmount)
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal totalPayment =  aggregatedPayments.get().stream().map(VendorSiteYearlyPayment::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            vendorSiteYearlyPaymentRecord.setAmount(totalPayment);
+            vendorSiteYearlyPaymentRecord.setCurrency(Currencies.valueOf(aggregatedPayments.get().get(0).getCurrency()));
         }
-        return VendorSiteYearlyPaymentRecord
-                .builder()
-                .amount(totalPayment)
-                .vendorSiteId(vendorSiteIds)
-                .currency(Currencies.valueOf(aggregatedPayments.get().get(0).getCurrency()))
-                .startYear(startYear)
-                .endYear(endYear)
-                .build();
+        return vendorSiteYearlyPaymentRecord;
     }
 
     @Transactional
@@ -58,7 +58,8 @@ public class PaymentAggregatorService {
         if(vendorSiteIds.size() == 0){
             return Optional.empty();
         }
-        return aggregatedPaymentsManager.getPaymentByVendorSites(vendorSiteIds, startYear, endYear);
+        List<VendorSiteYearlyPayment> vendorSiteYearlyPayments = nativeManager.getPaymentByVendorSites(vendorSiteIds, startYear, endYear);
+        return (vendorSiteYearlyPayments.size()!=0) ? Optional.of(vendorSiteYearlyPayments):Optional.empty();
     }
 
 
