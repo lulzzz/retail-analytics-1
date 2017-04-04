@@ -1,22 +1,27 @@
 package com.flipkart.retail.analytics.config;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import fk.sp.common.extensions.GraphiteConfig;
 import fk.sp.common.extensions.dropwizard.db.HasDataSourceFactory;
 import fk.sp.common.extensions.swagger.HasSwaggerConfiguration;
 import fk.sp.common.extensions.swagger.SwaggerConfiguration;
+import fk.sp.sa.common.bundles.HasGraphiteConfig;
 import flipkart.retail.server.admin.config.RotationManagementConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @Data
 public class AnalyticsConfiguration extends Configuration implements HasDataSourceFactory,
-        HasSwaggerConfiguration {
+        HasSwaggerConfiguration, HasGraphiteConfig {
 
     private DataSourceFactory dataSource;
+
+    @Valid
+    private GraphiteConfig graphiteConfig = null;
 
     @Valid
     @NotNull
