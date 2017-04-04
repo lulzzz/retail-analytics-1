@@ -16,7 +16,10 @@ import fk.sp.common.extensions.dropwizard.db.HasDataSourceFactory;
 import fk.sp.sa.reports.update.ReportDefinitionFile;
 import flipkart.retail.server.admin.config.RotationManagementConfig;
 import io.dropwizard.client.JerseyClientConfiguration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +44,16 @@ public class AnalyticsModule extends AbstractModule {
     return provider.get().getRotationManagementConfig();
   }
 
+  @Provides
+  Clock providesClock() {
+    return Clock.systemDefaultZone();
+  }
+
+  @Provides
+  public HasDataSourceFactory providesHasDataSourceFactory(
+          AnalyticsConfiguration analyticsConfiguration) {
+    return () -> analyticsConfiguration.getDatabaseConfiguration();
+  }
 
 
   @Provides
@@ -49,13 +62,18 @@ public class AnalyticsModule extends AbstractModule {
     return sellerAnalyticsConfigurationProvider.get().getGraphiteConfig();
   }
 
+  @Provides
+  JdbcTemplate providesJdbcTemplate(DataSource dataSource)
+          throws ClassNotFoundException {
+    return new JdbcTemplate(dataSource);
+  }
 
 
   @Override
   protected void configure() {
 
     List<String> darwinFiles = new ArrayList<String>();
-    darwinFiles.add("reports/seller-tiering.yaml");
+    darwinFiles.add("reports/config.yaml");
 
     Multibinder<ReportDefinitionFile> multiBinder = Multibinder.newSetBinder(
             binder(),
@@ -66,7 +84,7 @@ public class AnalyticsModule extends AbstractModule {
                     .addBinding()
                     .toInstance(new ReportDefinitionFile(reportDefinitionFile)));
 
-    bind(HasDataSourceFactory.class).to(AnalyticsConfiguration.class);
+//    bind(HasDataSourceFactory.class).to(AnalyticsConfiguration.class);
 
     //resource binding
     bind(PaymentResource.class).in(Singleton.class);

@@ -1,6 +1,6 @@
-report_name: vendor
-preparation_strategy: DELETE_ALL
-fact_table_name: po
+reportName: vendor
+preparationStrategy: DELETE_ALL
+factTableName: po
 fields:
   - name: vs_id
   - name: fsn

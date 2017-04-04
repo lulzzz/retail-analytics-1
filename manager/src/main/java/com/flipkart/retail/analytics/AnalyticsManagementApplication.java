@@ -14,6 +14,7 @@ import fk.sp.common.extensions.dropwizard.jersey.JerseyClientModule;
 import fk.sp.common.extensions.dropwizard.jersey.LoggingFilter;
 import fk.sp.common.extensions.guice.jpa.spring.JpaWithSpringModule;
 import fk.sp.common.extensions.swagger.SwaggerBundle;
+import fk.sp.sa.reports.config.ReportsModule;
 import flipkart.retail.server.admin.bundle.RotationManagementBundle;
 import flipkart.retail.server.admin.config.RotationManagementConfig;
 import io.dropwizard.Application;
@@ -44,11 +45,13 @@ public class AnalyticsManagementApplication extends Application<AnalyticsConfigu
                 .setConfigClass(AnalyticsConfiguration.class)
                 .addModule(new AnalyticsModule())
                 .addModule(new JerseyClientModule())
+                .addModule(new ReportsModule())
                 .addModule(new ElbHealthcheckModule())
                 .addModule(new MetricsInstrumentationModule(bootstrap.getMetricRegistry()))
                 .addModule(new JpaWithSpringModule(
                         Sets.newHashSet(
-                                "com.flipkart.retail.analytics"
+                                "com.flipkart.retail.analytics",
+                                "fk.sp.selleranalytics"
                         ), new Properties()))
                 .enableAutoConfig(
                         "fk.sp.common.extensions.guice.jpa",
@@ -59,6 +62,7 @@ public class AnalyticsManagementApplication extends Application<AnalyticsConfigu
                         "fk.sp.common.extensions.dropwizard.jpa",
                         "fk.sp.common.extensions.filter",
                         "com.flipkart.retail.analytics"
+
                 )
                 .build(Stage.DEVELOPMENT);
         bootstrap.addBundle(guiceBundle);

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class AnalyticsConfiguration extends Configuration implements HasDataSourceFactory,
         HasSwaggerConfiguration, HasGraphiteConfig {
-
+    @Valid
     private DataSourceFactory dataSource;
 
     @Valid
