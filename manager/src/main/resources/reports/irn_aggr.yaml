@@ -1,0 +1,11 @@
+reportName: irn_aggr_report
+preparationStrategy: DELETE_ALL
+factTableName: irn_aggr
+fields:
+  - name: vs_id
+  - name: fk_warehouse
+  - name: month
+  - name: status
+  - name: total_invoice_amount
+  - name: total_qty
+  - name: received_qty

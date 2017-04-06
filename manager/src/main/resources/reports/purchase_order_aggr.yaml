@@ -1,0 +1,12 @@
+reportName: purchase_order_report
+preparationStrategy: DELETE_ALL
+factTableName: purchase_order_aggr
+fields:
+  - name: vs_id
+  - name: fsn
+  - name: fk_warehouse
+  - name: currency
+  - name: month
+  - name: status
+  - name: received_quantity
+  - name: amount

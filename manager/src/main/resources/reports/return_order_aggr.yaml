@@ -1,0 +1,15 @@
+reportName: return_order_report
+preparationStrategy: DELETE_ALL
+factTableName: return_order_aggr
+fields:
+  - name: vs_id
+  - name: fsn
+  - name: fk_warehouse
+  - name: currency
+  - name: month
+  - name: roi_status
+  - name: quantity
+  - name: amount
+  - name: lost_quantity
+  - name: processed_quantity
+

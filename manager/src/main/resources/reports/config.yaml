@@ -1,8 +1,0 @@
-reportName: vendor
-preparationStrategy: DELETE_ALL
-factTableName: po
-fields:
-  - name: vs_id
-  - name: fsn
-  - name: fk_warehouse
-  - name: currency
