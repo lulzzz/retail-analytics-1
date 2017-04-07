@@ -73,7 +73,7 @@ public class AnalyticsModule extends AbstractModule {
   protected void configure() {
 
     List<String> darwinFiles =
-	Lists.newArrayList("purchase_order_aggr.yaml", "return_order_aggr.yaml", "irn_aggr.yaml");
+	Lists.newArrayList("reports/purchase_order_aggr.yaml", "reports/return_order_aggr.yaml", "reports/irn_aggr.yaml");
 
     Multibinder<ReportDefinitionFile> multiBinder = Multibinder.newSetBinder(
 	binder(),

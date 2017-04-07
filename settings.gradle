@@ -16,7 +16,6 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'retail-analytics'
 include 'manager'
 
 include 'aggregated-data'

@@ -27,6 +27,7 @@ subprojects{
         compile 'org.hibernate:hibernate-validator:4.3.10.Final'
         compile 'com.wordnik:swagger-jaxrs_2.9.1:1.3.1'
         compile('mysql:mysql-connector-java:5.1.37')
+        compile('io.dropwizard:dropwizard-migrations:0.9.1')
         compile('fk.sp.common:common-extensions:' + commonExtentions)
         compile('fk.sp.common:spring-jpa:' + commonExtentions)
         compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.1"

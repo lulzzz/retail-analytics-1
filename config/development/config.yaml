@@ -57,6 +57,7 @@ logging:
     "com.sun.jersey.api": ERROR
     "org.apache.zookeeper": INFO
     "fk.sp.common.extensions.dropwizard.jersey": ERROR
+    "fk.sp.sa": DEBUG
 
 server:
   applicationConnectors:
