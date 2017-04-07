@@ -98,12 +98,19 @@ ext.appName = dropwizardDebian.applicationName
 
 apply from: file('gradle/common.gradle')
 
+project ('aggregated-data'){
+    dependencies {
+        compile project(':data-model')
+    }
+}
+
 project(':manager') {
 
     apply plugin: 'java'
 
     dependencies {
-
+        compile project(':data-model')
+        compile project(':aggregated-data')
     }
 
     test {
