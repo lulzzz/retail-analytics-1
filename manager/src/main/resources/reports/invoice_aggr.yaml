@@ -1,0 +1,13 @@
+reportName: invoice_aggr_report
+preparationStrategy: DELETE_ALL
+factTableName: invoice_aggr
+fields:
+  - name: vs_id
+  - name: fk_warehouse
+  - name: invoice_type
+  - name: month
+  - name: status
+  - name: currency
+  - name: total_quantity
+  - name: total_open_amount
+  - name: total_invoice_amount

@@ -32,6 +32,7 @@ subprojects{
         compile('fk.sp.common:spring-jpa:' + commonExtentions)
         compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.1"
         compile('flipkart.retail.libraries:dropwizard-admin:5.0.3')
+        compile('io.dropwizard:dropwizard-migrations:' + dropwizardVersion)
 
         compile('org.ehcache:jcache:1.0.1')
         compile('org.jsr107.ri:cache-annotations-ri-guice:1.0.0')
