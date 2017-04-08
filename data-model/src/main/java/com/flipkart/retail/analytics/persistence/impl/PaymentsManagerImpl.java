@@ -24,7 +24,7 @@ public class PaymentsManagerImpl extends SimpleJpaGenericRepository<Payment, Lon
         Query query = getEntityManager().createNamedQuery("findLastPaymentByVsIds")
                 .setParameter("vendorSiteIds", vendorSiteIds)
                 .setMaxResults(1);
-       return Optional.of((Payment) query.getResultList().get(0));
+       return query.getResultList().size() > 0 ? Optional.of((Payment) query.getResultList().get(0)): Optional.empty();
 
     }
 }

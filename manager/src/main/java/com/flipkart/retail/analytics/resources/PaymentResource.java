@@ -33,7 +33,12 @@ public class PaymentResource {
     @Timed
     public Response getLastPaymentByVs(@NotNull @QueryParam("vendorSiteIds") String vendorSiteId) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
-        return Response.ok(paymentsService.getLastPaymentByVs(vendorSiteIds)).build();
+        VendorSitePaymentsDetails vendorSitePaymentsDetails = paymentsService.getLastPaymentByVs(vendorSiteIds);
+        if(vendorSitePaymentsDetails == null){
+            return Response.status(404).build();
+        }
+        return Response.ok(vendorSitePaymentsDetails).build();
+
     }
 
 
