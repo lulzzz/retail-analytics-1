@@ -1,8 +1,5 @@
 package com.flipkart.retail.analytics.config;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import fk.sp.common.extensions.GraphiteConfig;
 import fk.sp.common.extensions.dropwizard.db.HasDataSourceFactory;
 import fk.sp.common.extensions.swagger.HasSwaggerConfiguration;
@@ -13,6 +10,9 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import lombok.Data;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class AnalyticsConfiguration extends Configuration implements HasDataSourceFactory,
@@ -26,7 +26,12 @@ public class AnalyticsConfiguration extends Configuration implements HasDataSour
 
   @Valid
   @NotNull
+  private ReportsConfiguration reportsConfiguration;
+
+  @Valid
+  @NotNull
   private RotationManagementConfig rotationManagementConfig;
+
   @Valid
   @NotNull
   private SwaggerConfiguration swaggerConfiguration = new SwaggerConfiguration();
