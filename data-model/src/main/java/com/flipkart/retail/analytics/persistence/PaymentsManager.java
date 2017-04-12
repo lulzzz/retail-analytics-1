@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface PaymentsManager extends JpaGenericRepository<Payment, Long> {
 
     public Optional<Payment> getLastPaymentByVs(List<String> vendorSiteIds);
+    Optional<Payment>getPayments(String paymentId);
+   // List<Payment> getPaymentByVendorSites(PaymentSearch paymentSearchRequest);
 }

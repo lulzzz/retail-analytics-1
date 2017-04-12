@@ -6,7 +6,7 @@ dataSource:
   # the password
   password:
   # the JDBC URL
-  url: jdbc:mysql://127.0.0.1/aggregation_pipeline
+  url: jdbc:mysql://127.0.0.1/aggregation_pipelines
   # any properties specific to your JDBC driver:
   properties:
     charSet: UTF-8

@@ -1,6 +1,7 @@
 package com.flipkart.retail.analytics.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.flipkart.retail.analytics.payments.dto.request.PaymentSearchRequest;
 import com.flipkart.retail.analytics.payments.dto.response.VendorSitePaymentsDetails;
 import com.flipkart.retail.analytics.payments.services.PaymentsService;
 import com.google.inject.Inject;
@@ -8,17 +9,14 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 
-@Data
 @Path("/payment")
 @Api(value = "/payment", description = "aggregation pipeline")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,12 +32,36 @@ public class PaymentResource {
     public Response getLastPaymentByVs(@NotNull @QueryParam("vendorSiteIds") String vendorSiteId) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
         VendorSitePaymentsDetails vendorSitePaymentsDetails = paymentsService.getLastPaymentByVs(vendorSiteIds);
-        if(vendorSitePaymentsDetails == null){
+        if (vendorSitePaymentsDetails == null) {
             return Response.status(404).build();
         }
         return Response.ok(vendorSitePaymentsDetails).build();
 
     }
 
+    @GET
+    @Path("/{payment_id}")
+    @ApiOperation(value = "Get payment ids for a particular invoice id")
+    @Timed
+    public Response getPaymentsFromId(@NotNull @PathParam("payment_id") String paymentId)
+    {
+        return Response.ok(paymentsService.getPaymentsDetails(paymentId)).build();
+        /*try {
+            return Response.ok(paymentsService.getPaymentsDetails(paymentId)).build();
+        }
+        catch (AuthServiceException e)
+        {
+            return Response.status(e.getHttpStatusCode()).entity(e.toJson()).build();
+        }*/
+    }
 
+  /*  @POST
+    @Path("/search")
+    @ApiOperation(value = "Get payment ids for a particular invoice id")
+    @Timed
+    public Response getPaymentDetailsFromVendorSites(@Valid PaymentSearchRequest paymentSearchRequest)
+    {
+        return Response.ok(paymentsService.getPaymentFromVendorSites(paymentSearchRequest)).build();
+    }
+*/
 }
