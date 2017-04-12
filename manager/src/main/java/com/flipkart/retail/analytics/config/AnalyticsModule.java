@@ -1,14 +1,15 @@
 package com.flipkart.retail.analytics.config;
 
-import com.flipkart.retail.analytics.persistence.AggregatedPaymentsManager;
-import com.flipkart.retail.analytics.persistence.PaymentItemsPersistenceManager;
-import com.flipkart.retail.analytics.persistence.PaymentsManager;
-import com.flipkart.retail.analytics.persistence.impl.AggregatedPaymentsManagerImpl;
-import com.flipkart.retail.analytics.persistence.impl.PaymentItemsPersistenceManagerImpl;
-import com.flipkart.retail.analytics.persistence.impl.PaymentsManagerImpl;
+import com.flipkart.retail.analytics.factories.EntityHandlerFactory;
+import com.flipkart.retail.analytics.factories.EntityHandlerFactory;
+import com.flipkart.retail.analytics.persistence.*;
+import com.flipkart.retail.analytics.persistence.impl.*;
+import com.flipkart.retail.analytics.repository.EntityRepository;
 import com.flipkart.retail.analytics.resources.AggregatedPaymentResource;
 import com.flipkart.retail.analytics.resources.InvoiceResource;
 import com.flipkart.retail.analytics.resources.PaymentResource;
+import com.flipkart.retail.analytics.service.aggregated.PurchaseOrderService;
+import com.flipkart.retail.analytics.service.aggregated.ReturnOrderService;
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
@@ -24,76 +25,72 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AnalyticsModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        List<String> darwinFiles = Lists.newArrayList(
+                "reports/purchase_order_aggr.yaml",
+                "reports/return_order_aggr.yaml",
+                "reports/irn_aggr.yaml",
+                "reports/invoice_aggr.yaml"
+        );
 
-  List<String> darwinFiles = new ArrayList();
+        Multibinder<ReportDefinitionFile> multiBinder = Multibinder.newSetBinder(binder(), ReportDefinitionFile.class);
+        darwinFiles.stream().forEach(
+                reportDefinitionFile -> multiBinder.addBinding().toInstance(new ReportDefinitionFile(reportDefinitionFile))
+        );
 
-  @Provides
-  @Singleton
-  JerseyClientConfiguration providesJerseyClientConfiguration(
-      Provider<AnalyticsConfiguration> provider) {
-    return provider.get().getJerseyClient();
-  }
+        bind(PaymentResource.class).in(Singleton.class);
+        bind(AggregatedPaymentResource.class).in(Singleton.class);
+        bind(PaymentsManager.class).to(PaymentsManagerImpl.class).in(Singleton.class);
+        bind(PaymentItemsPersistenceManager.class).to(PaymentItemsPersistenceManagerImpl.class).in(Singleton.class);
+        bind(AggregatedPaymentsManager.class).to(AggregatedPaymentsManagerImpl.class).in(Singleton.class);
+        bind(PurchaseOrderDao.class).to(PurchaseOrderDaoImpl.class).in(Singleton.class);
+        bind(ReturnOrderDao.class).to(ReturnOrderDaoImpl.class).in(Singleton.class);
+        bind(EntityRepository.class).in(Singleton.class);
+        bind(EntityHandlerFactory.class).in(Singleton.class);
+        bind(InvoiceResource.class).in(Singleton.class);
+        bind(PurchaseOrderService.class).in(Singleton.class);
+        bind(ReturnOrderService.class).in(Singleton.class);
+    }
 
-  @Provides
-  @Singleton
-  RotationManagementConfig providesRotationConfig(
-      Provider<AnalyticsConfiguration> provider) {
-    return provider.get().getRotationManagementConfig();
-  }
+    @Provides
+    @Singleton
+    JerseyClientConfiguration providesJerseyClientConfiguration(Provider<AnalyticsConfiguration> provider) {
+        return provider.get().getJerseyClient();
+    }
 
-  @Provides
-  Clock providesClock() {
-    return Clock.systemDefaultZone();
-  }
+    @Provides
+    @Singleton
+    RotationManagementConfig providesRotationConfig(Provider<AnalyticsConfiguration> provider) {
+        return provider.get().getRotationManagementConfig();
+    }
 
-  @Provides
-  public HasDataSourceFactory providesHasDataSourceFactory(
-      AnalyticsConfiguration analyticsConfiguration) {
-    return () -> analyticsConfiguration.getDatabaseConfiguration();
-  }
+    @Provides
+    Clock providesClock() {
+        return Clock.systemDefaultZone();
+    }
 
-  @Provides
-  GraphiteConfig providesGraphiteConfig(
-      final Provider<AnalyticsConfiguration> sellerAnalyticsConfigurationProvider) {
-    return sellerAnalyticsConfigurationProvider.get().getGraphiteConfig();
-  }
+    @Provides
+    public HasDataSourceFactory providesHasDataSourceFactory(AnalyticsConfiguration analyticsConfiguration) {
+        return () -> analyticsConfiguration.getDatabaseConfiguration();
+    }
 
-  @Provides
-  JdbcTemplate providesJdbcTemplate(DataSource dataSource)
-  throws ClassNotFoundException {
-    return new JdbcTemplate(dataSource);
-  }
+    @Provides
+    GraphiteConfig providesGraphiteConfig(final Provider<AnalyticsConfiguration> sellerAnalyticsConfigurationProvider) {
+        return sellerAnalyticsConfigurationProvider.get().getGraphiteConfig();
+    }
 
-  @Override
-  protected void configure() {
+    @Provides
+    JdbcTemplate providesJdbcTemplate(DataSource dataSource) throws ClassNotFoundException {
+        return new JdbcTemplate(dataSource);
+    }
 
-    List<String> darwinFiles =
-	Lists.newArrayList("reports/purchase_order_aggr.yaml", "reports/return_order_aggr.yaml", "reports/irn_aggr.yaml",
-            "reports/invoice_aggr.yaml");
-
-    Multibinder<ReportDefinitionFile> multiBinder = Multibinder.newSetBinder(
-	binder(),
-	ReportDefinitionFile.class
-    );
-    darwinFiles.stream().forEach(
-	reportDefinitionFile -> multiBinder
-	    .addBinding()
-	    .toInstance(new ReportDefinitionFile(reportDefinitionFile)));
-
-    //resource binding
-      bind(InvoiceResource.class).in(Singleton.class);
-    bind(PaymentResource.class).in(Singleton.class);
-    bind(AggregatedPaymentResource.class).in(Singleton.class);
-
-    //interface and implementation binding
-    bind(PaymentsManager.class).to(PaymentsManagerImpl.class).in(Singleton.class);
-      bind(PaymentItemsPersistenceManager.class).to(PaymentItemsPersistenceManagerImpl.class).in(Singleton.class);
-    bind(AggregatedPaymentsManager.class).to(AggregatedPaymentsManagerImpl.class)
-	.in(Singleton.class);
-
-  }
+    @Provides
+    @Singleton
+    ReportsConfiguration providesReportConfiguration(AnalyticsConfiguration analyticsConfiguration){
+        return analyticsConfiguration.getReportsConfiguration();
+    }
 }

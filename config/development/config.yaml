@@ -1,32 +1,18 @@
 dataSource:
-  # the name of your JDBC driver
   driverClass: com.mysql.jdbc.Driver
-  # the username
   user: root
-  # the password
   password:
-  # the JDBC URL
-  url: jdbc:mysql://127.0.0.1/aggregation_pipelines
-  # any properties specific to your JDBC driver:
+  url: jdbc:mysql://127.0.0.1/aggregation_pipeline
   properties:
     charSet: UTF-8
-  # the maximum amount of time to wait on an empty pool before throwing an exception
   maxWaitForConnection: 1s
-  # the SQL query to run when validating a connection's liveness
   validationQuery: "/* MyService Health Check */ SELECT 1"
-  # the minimum number of connections to keep open
   minSize: 8
-  # the maximum number of connections to keep open
   maxSize: 32
-  # whether or not idle connections should be validated
   checkConnectionWhileIdle: true
-  # how long a connection must be held before it can be validated
   validationInterval: 10s
-  # the maximum lifetime of an idle connection
   minIdleTime: 1 minute
-  # the maximum lifetime of an idle connection
   maxConnectionAge: 1 minute
-  # the amount of time to sleep between runs of the idle connection validation, abandoned cleaner and idle pool resizing
   evictionInterval: 10s
 
 rotationManagementConfig:
@@ -43,7 +29,6 @@ logging:
     maxFileSize: "500mb"
     maxArchivedDataSize: "1gb"
 
-  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: DEBUG
 
   loggers:
@@ -89,4 +74,8 @@ jerseyClient:
  maxThreads: 128
  gzipEnabled: false
  gzipEnabledForRequests: false
+
+reportsConfiguration:
+  purchaseOrder: purchase_order_report
+  returnOrder: return_order_report
 

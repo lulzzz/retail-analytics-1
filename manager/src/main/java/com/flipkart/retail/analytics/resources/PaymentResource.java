@@ -55,13 +55,13 @@ public class PaymentResource {
         }*/
     }
 
-  /*  @POST
+    /*@POST
     @Path("/search")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
     public Response getPaymentDetailsFromVendorSites(@Valid PaymentSearchRequest paymentSearchRequest)
     {
         return Response.ok(paymentsService.getPaymentFromVendorSites(paymentSearchRequest)).build();
-    }
-*/
+    }*/
+
 }

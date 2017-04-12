@@ -58,7 +58,7 @@ public class PaymentsService {
         return PaymentToDtoMapper.getPaymentResponse(payments.get());
     }
 
-   /* @Transactional
+    /*@Transactional
     public PaymentListResponse getPaymentFromVendorSites(PaymentSearchRequest paymentSearchRequest)
     {
 
