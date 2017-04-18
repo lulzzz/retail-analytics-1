@@ -10,7 +10,7 @@ public class ROPurchasingTrend extends PurchasingTrend {
     private double amount;
 
     public ROPurchasingTrend(String month, String currency, int units, double amount){
-        this.month = month;
+        super(month);
         this.currency = currency;
         this.units = units;
         this.amount = amount;

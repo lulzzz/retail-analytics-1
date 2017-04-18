@@ -1,7 +1,6 @@
 package com.flipkart.retail.analytics.config;
 
 import com.flipkart.retail.analytics.factories.EntityHandlerFactory;
-import com.flipkart.retail.analytics.factories.EntityHandlerFactory;
 import com.flipkart.retail.analytics.persistence.*;
 import com.flipkart.retail.analytics.persistence.impl.*;
 import com.flipkart.retail.analytics.repository.EntityRepository;
@@ -30,15 +29,16 @@ import java.util.List;
 public class AnalyticsModule extends AbstractModule {
     @Override
     protected void configure() {
-        List<String> darwinFiles = Lists.newArrayList(
+        List<String> aggrReports = Lists.newArrayList(
                 "reports/purchase_order_aggr.yaml",
                 "reports/return_order_aggr.yaml",
                 "reports/irn_aggr.yaml",
-                "reports/invoice_aggr.yaml"
+                "reports/invoice_aggr.yaml",
+                "reports/qc_aggr.yaml"
         );
 
         Multibinder<ReportDefinitionFile> multiBinder = Multibinder.newSetBinder(binder(), ReportDefinitionFile.class);
-        darwinFiles.stream().forEach(
+        aggrReports.stream().forEach(
                 reportDefinitionFile -> multiBinder.addBinding().toInstance(new ReportDefinitionFile(reportDefinitionFile))
         );
 
@@ -47,7 +47,11 @@ public class AnalyticsModule extends AbstractModule {
         bind(PaymentsManager.class).to(PaymentsManagerImpl.class).in(Singleton.class);
         bind(PaymentItemsPersistenceManager.class).to(PaymentItemsPersistenceManagerImpl.class).in(Singleton.class);
         bind(AggregatedPaymentsManager.class).to(AggregatedPaymentsManagerImpl.class).in(Singleton.class);
+        bind(InvoiceDao.class).to(InvoiceDaoImpl.class).in(Singleton.class);
+        bind(IRNDao.class).to(IRNDaoImpl.class).in(Singleton.class);
+        bind(PaymentsDao.class).to(PaymentsDaoImpl.class).in(Singleton.class);
         bind(PurchaseOrderDao.class).to(PurchaseOrderDaoImpl.class).in(Singleton.class);
+        bind(QCDao.class).to(QCDaoImpl.class).in(Singleton.class);
         bind(ReturnOrderDao.class).to(ReturnOrderDaoImpl.class).in(Singleton.class);
         bind(EntityRepository.class).in(Singleton.class);
         bind(EntityHandlerFactory.class).in(Singleton.class);

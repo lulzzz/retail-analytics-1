@@ -35,8 +35,34 @@ public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
         });
     }
 
+    @Override
+    public List<PurchaseOrder> getPurchaseOrderDetails(String tableName, List<String> vendorSites) {
+        String query = getPoDetailsQuery(tableName, vendorSites);
+        return jdbcTemplate.query(query, new ResultSetExtractor<List<PurchaseOrder>>() {
+            @Override
+            public List<PurchaseOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+                while (rs.next()) {
+                    PurchaseOrder purchaseOrder = new PurchaseOrder();
+                    purchaseOrder.setStatus(rs.getString(1));
+                    purchaseOrder.setCurrency(rs.getString(2));
+                    purchaseOrder.setQuantity(rs.getInt(3));
+                    purchaseOrder.setAmount(rs.getDouble(4));
+                    purchaseOrderList.add(purchaseOrder);
+                }
+                return purchaseOrderList;
+            }
+        });
+    }
+
     private String getPoQuery(String tableName, List<String> vendorSites, List<String> warehouses){
-        return "select month, currency, SUM(received_quantity), SUM(amount) from " + tableName + " where vs_id IN ('" + Joiner.on("','").join(vendorSites)
+        return "SELECT month, currency, SUM(received_quantity), SUM(amount) from " + tableName + " WHERE vs_id IN ('" +
+                Joiner.on("','").join(vendorSites)
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
+    }
+
+    private String getPoDetailsQuery(String tablename, List<String> vendorSites){
+        return "SELECT status, currency, SUM(received_quantity), SUM(amount) from " + tablename + " WHERE vs_id IN ('" +
+                Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
     }
 }

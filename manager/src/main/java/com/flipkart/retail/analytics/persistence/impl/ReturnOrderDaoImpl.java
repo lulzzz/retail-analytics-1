@@ -26,9 +26,6 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
             public List<ReturnOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
                 List<ReturnOrder> returnOrderList = new ArrayList<>();
                 while (rs.next()) {
-//                    ReturnOrder returnOrder = new ReturnOrder(rs.getLong(1), rs.getString(2), rs.getString(3),
-//                            rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs
-//                            .getDouble(9), rs.getInt(10), rs.getInt(11), rs.getDate(12));
                     ReturnOrder returnOrder = new ReturnOrder(rs.getString(1), rs.getString(2), rs.getInt(3), rs
                             .getDouble(4));
                     returnOrderList.add(returnOrder);
@@ -38,8 +35,18 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
         });
     }
 
+    @Override
+    public List<ReturnOrder> getreturnOrderDetails(String tableName, List<String> vendorSites) {
+        return null;
+    }
+
     private String getROQuery(String tableName, List<String> vendorSites, List<String> warehouses){
         return "select month, currency, SUM(quantity), SUM(amount) from " + tableName + " where vs_id IN ('" + Joiner.on("','").join(vendorSites)
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
+    }
+
+    private String getRODetailsQuery(String tablename, List<String> vendorSites){
+        return "SELECT roi_status, currency, SUM(received_quantity), SUM(amount) from " + tablename + " WHERE vs_id IN ('" +
+                Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
     }
 }

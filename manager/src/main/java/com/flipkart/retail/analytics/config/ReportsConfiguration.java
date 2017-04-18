@@ -6,4 +6,7 @@ import lombok.Data;
 public class ReportsConfiguration {
     private String purchaseOrder;
     private String returnOrder;
+    private String irn;
+    private String invoice;
+    private String qc;
 }

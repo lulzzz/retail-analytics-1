@@ -1,0 +1,13 @@
+reportName: qc_aggr_report
+preparationStrategy: DELETE_ALL
+factTableName: qc_aggr
+fields:
+  - name: vs_id
+  - name: warehouse
+  - name: month
+  - name: status
+  - name: currency
+  - name: reject_qty
+  - name: excess_qty
+  - name: reject_amount
+  - name: excess_amount

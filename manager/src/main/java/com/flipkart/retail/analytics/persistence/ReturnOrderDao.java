@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReturnOrderDao {
     List<ReturnOrder> getReturnOrders(String tableName, List<String> vendorSites, List<String> warehouses);
+
+    List<ReturnOrder> getreturnOrderDetails(String tableName, List<String> vendorSites);
 }

@@ -1,7 +1,6 @@
 package com.flipkart.retail.analytics.service;
 
-import com.flipkart.retail.analytics.dto.AggregatedPurchasingTrendResponse;
-import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import com.flipkart.retail.analytics.dto.*;
 import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.repository.EntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,8 @@ public class BaseAggregationService {
         AggregatedPurchasingTrendResponse aggregatedPurchasingTrendResponse = new AggregatedPurchasingTrendResponse();
         List<Map<EntityType, List<PurchasingTrend>>> purchasingTrendsList = new ArrayList<>();
         for (EntityType entityType : entityTypes){
-            AggregatedService aggregatedService = getEntityHandler(entityType);
-            List<PurchasingTrend> purchasingTrends = aggregatedService.getAggregatedPurchasingTrend(vendorSites, warehouses);
+            AggregationService aggregationService = getEntityHandler(entityType);
+            List<PurchasingTrend> purchasingTrends = aggregationService.getAggregatedPurchasingTrend(vendorSites, warehouses);
             purchasingTrendsList.add(new HashMap<EntityType, List<PurchasingTrend>>(){{
                 put(entityType, purchasingTrends);
             }});
@@ -30,7 +29,22 @@ public class BaseAggregationService {
         return aggregatedPurchasingTrendResponse;
     }
 
-    private AggregatedService getEntityHandler(EntityType entityType){
+    public AggregatedDetailedResponse getAggregatedDetails(AggregatedDetailedRequest aggregatedDetailedRequest){
+        AggregatedDetailedResponse aggregatedDetailedResponse = new AggregatedDetailedResponse();
+        List<Map<EntityType, List<AggregatedDetails>>> aggregatedDetailsList = new ArrayList<>();
+        for(EntityType entityType : aggregatedDetailedRequest.getEntities()){
+            AggregationService aggregationService = getEntityHandler(entityType);
+            List<AggregatedDetails> aggregatedDetails = aggregationService.getDetailedResponse
+                    (aggregatedDetailedRequest.getVendorSites());
+            aggregatedDetailsList.add(new HashMap<EntityType, List<AggregatedDetails>>(){{
+                put(entityType, aggregatedDetails);
+            }});
+        }
+        aggregatedDetailedResponse.setAggregatedDetails(aggregatedDetailsList);
+        return aggregatedDetailedResponse;
+    }
+
+    private AggregationService getEntityHandler(EntityType entityType){
         return entityRepository.getHandler(entityType);
     }
 }

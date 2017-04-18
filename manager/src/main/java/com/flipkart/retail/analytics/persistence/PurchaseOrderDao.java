@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface PurchaseOrderDao {
     List<PurchaseOrder> getPurchaseOrders(String tableName, List<String> vendorSites, List<String> warehouses);
+
+    List<PurchaseOrder> getPurchaseOrderDetails(String tableName, List<String> vendorSites);
 }

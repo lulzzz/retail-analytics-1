@@ -2,7 +2,7 @@ package com.flipkart.retail.analytics.factories;
 
 import com.flipkart.retail.analytics.annotations.EntityHandler;
 import com.flipkart.retail.analytics.repository.EntityRepository;
-import com.flipkart.retail.analytics.service.AggregatedService;
+import com.flipkart.retail.analytics.service.AggregationService;
 import com.google.inject.Injector;
 import io.dropwizard.lifecycle.Managed;
 import lombok.RequiredArgsConstructor;
@@ -30,21 +30,21 @@ public class EntityHandlerFactory implements Managed{
 
     }
 
-    private void registerHandler(Class<AggregatedService> klass){
+    private void registerHandler(Class<AggregationService> klass){
         EntityHandler entityHandlerAnnotation = klass.getAnnotation(EntityHandler.class);
-        AggregatedService aggregatedService = injector.getInstance(klass);
+        AggregationService aggregationService = injector.getInstance(klass);
         if(Objects.nonNull(entityHandlerAnnotation)){
             EntityHandler.Type[] entityTypeAnnotations = entityHandlerAnnotation.value();
             for(EntityHandler.Type entityTypeAnnotation : entityTypeAnnotations){
-                entityRepository.addHandler(entityTypeAnnotation.entityType(), aggregatedService);
+                entityRepository.addHandler(entityTypeAnnotation.entityType(), aggregationService);
             }
         }
     }
 
-    private Set<Class<AggregatedService>> getAllHandlers(){
+    private Set<Class<AggregationService>> getAllHandlers(){
         Reflections reflections = new Reflections(PACKAGE);
         Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(EntityHandler.class);
-        return annotatedClasses.stream().filter(AggregatedService.class::isAssignableFrom)
-                .map(klass -> (Class<AggregatedService>) klass).collect(Collectors.toSet());
+        return annotatedClasses.stream().filter(AggregationService.class::isAssignableFrom)
+                .map(klass -> (Class<AggregationService>) klass).collect(Collectors.toSet());
     }
 }

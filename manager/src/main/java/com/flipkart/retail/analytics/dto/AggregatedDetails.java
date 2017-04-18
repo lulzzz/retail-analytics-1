@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public abstract class PurchasingTrend {
-    protected String month;
+public class AggregatedDetails {
+    private String status;
+    private int units;
+    private double amount;
 }

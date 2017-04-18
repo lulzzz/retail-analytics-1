@@ -10,5 +10,5 @@ import java.util.Map;
 @Data
 public class AggregatedPurchasingTrendResponse {
     private List<Map<EntityType, List<PurchasingTrend>>> purchasingTrends;
-    private Date lastLoginTime;
+    private Date lastUpdatedTime;
 }
