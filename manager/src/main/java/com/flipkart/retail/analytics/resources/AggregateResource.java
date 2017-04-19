@@ -35,7 +35,7 @@ public class AggregateResource {
         return Response.ok(aggregatedPurchasingTrendResponse).build();
     }
 
-    @Path("/purchase-order")
+    @Path("/details")
     @POST
     @ApiOperation(value = "Aggregated purchase order")
     @Timed

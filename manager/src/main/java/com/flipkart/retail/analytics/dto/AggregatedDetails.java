@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class AggregatedDetails {
     private String status;
+    private String currency;
     private int units;
     private double amount;
 }

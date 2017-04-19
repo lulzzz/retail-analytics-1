@@ -1,8 +1,10 @@
 package com.flipkart.retail.analytics.persistence.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ReturnOrder {
     private String status;
     private String month;

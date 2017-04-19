@@ -37,7 +37,22 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
 
     @Override
     public List<ReturnOrder> getreturnOrderDetails(String tableName, List<String> vendorSites) {
-        return null;
+        String query = getRODetailsQuery(tableName, vendorSites);
+        return jdbcTemplate.query(query, new ResultSetExtractor<List<ReturnOrder>>() {
+            @Override
+            public List<ReturnOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<ReturnOrder> returnOrderList = new ArrayList<>();
+                while (rs.next()) {
+                    ReturnOrder returnOrder = new ReturnOrder();
+                    returnOrder.setStatus(rs.getString(1));
+                    returnOrder.setCurrency(rs.getString(2));
+                    returnOrder.setQuantity(rs.getInt(3));
+                    returnOrder.setAmount(rs.getDouble(4));
+                    returnOrderList.add(returnOrder);
+                }
+                return returnOrderList;
+            }
+        });
     }
 
     private String getROQuery(String tableName, List<String> vendorSites, List<String> warehouses){
@@ -46,7 +61,7 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
     }
 
     private String getRODetailsQuery(String tablename, List<String> vendorSites){
-        return "SELECT roi_status, currency, SUM(received_quantity), SUM(amount) from " + tablename + " WHERE vs_id IN ('" +
-                Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
+        return "SELECT roi_status, currency, SUM(processed_quantity), SUM(amount) from " + tablename + " WHERE vs_id IN ('" +
+                Joiner.on("','").join(vendorSites) + "') GROUP BY currency, roi_status;";
     }
 }

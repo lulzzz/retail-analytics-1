@@ -44,7 +44,14 @@ public class ReturnOrderService implements AggregationService {
 
     @Override
     public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites) {
-        return null;
+        List<ReturnOrder> returnOrderList = returnOrderDao.getreturnOrderDetails(getROTable(), vendorSites);
+        List<AggregatedDetails> aggregatedDetailsList = new ArrayList<>();
+        for(ReturnOrder returnOrder : returnOrderList){
+            AggregatedDetails aggregatedDetails = new AggregatedDetails(returnOrder.getStatus(), returnOrder
+                    .getCurrency(), returnOrder.getQuantity(), returnOrder.getAmount());
+            aggregatedDetailsList.add(aggregatedDetails);
+        }
+        return aggregatedDetailsList;
     }
 
     private String getROTable(){

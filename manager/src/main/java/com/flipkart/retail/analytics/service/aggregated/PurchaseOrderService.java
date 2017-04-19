@@ -48,7 +48,7 @@ public class PurchaseOrderService implements AggregationService {
         List<AggregatedDetails> aggregatedDetailsList = new ArrayList<>();
         for(PurchaseOrder purchaseOrder : purchaseOrderList){
             AggregatedDetails aggregatedDetails = new AggregatedDetails(purchaseOrder.getStatus(), purchaseOrder
-                    .getQuantity(), purchaseOrder.getAmount());
+                    .getCurrency(), purchaseOrder.getQuantity(), purchaseOrder.getAmount());
             aggregatedDetailsList.add(aggregatedDetails);
         }
         return aggregatedDetailsList;
