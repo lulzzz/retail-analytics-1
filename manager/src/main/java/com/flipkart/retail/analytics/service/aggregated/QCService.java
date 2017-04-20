@@ -1,11 +1,14 @@
 package com.flipkart.retail.analytics.service.aggregated;
 
 import com.flipkart.retail.analytics.annotations.EntityHandler;
+import com.flipkart.retail.analytics.annotations.MetricHandler;
 import com.flipkart.retail.analytics.config.ReportsConfiguration;
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
+import com.flipkart.retail.analytics.dto.OperationalPerformance;
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
 import com.flipkart.retail.analytics.dto.purchasingTrend.QCPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
+import com.flipkart.retail.analytics.enums.MetricType;
 import com.flipkart.retail.analytics.persistence.QCDao;
 import com.flipkart.retail.analytics.persistence.entity.QC;
 import com.flipkart.retail.analytics.service.AggregationService;
@@ -16,8 +19,10 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-@EntityHandler({
-        @EntityHandler.Type(entityType = EntityType.QUALITY_CHECK)
+@EntityHandler(entityType = EntityType.QUALITY_CHECK)
+@MetricHandler({
+        @MetricHandler.Type(metricType = MetricType.QC_REJECT),
+        @MetricHandler.Type(metricType = MetricType.QC_REJECT_WITH_EXCESS)
 })
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class QCService implements AggregationService {
@@ -39,8 +44,8 @@ public class QCService implements AggregationService {
     }
 
     @Override
-    public void getAggregatedOperationalPerformance(List<String> vendorSites, List<String> warehouses) {
-
+    public List<OperationalPerformance> getAggregatedOperationalPerformance(MetricType metricType, List<String> vendorSites, List<String> warehouses) {
+        return null;
     }
 
     @Override

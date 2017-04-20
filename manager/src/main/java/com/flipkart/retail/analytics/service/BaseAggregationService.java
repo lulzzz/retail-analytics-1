@@ -2,7 +2,9 @@ package com.flipkart.retail.analytics.service;
 
 import com.flipkart.retail.analytics.dto.*;
 import com.flipkart.retail.analytics.enums.EntityType;
+import com.flipkart.retail.analytics.enums.MetricType;
 import com.flipkart.retail.analytics.repository.EntityRepository;
+import com.flipkart.retail.analytics.repository.MetricRepository;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class BaseAggregationService {
     private final EntityRepository entityRepository;
+    private final MetricRepository metricRepository;
 
     public AggregatedPurchasingTrendResponse getAggregatedPurchasingTrends(List<EntityType> entityTypes, List<String> vendorSites, List<String> warehouses){
         AggregatedPurchasingTrendResponse aggregatedPurchasingTrendResponse = new AggregatedPurchasingTrendResponse();
@@ -27,6 +30,22 @@ public class BaseAggregationService {
         }
         aggregatedPurchasingTrendResponse.setPurchasingTrends(purchasingTrendsList);
         return aggregatedPurchasingTrendResponse;
+    }
+
+    public OperationalPerformanceResponse getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest){
+        OperationalPerformanceResponse operationalPerformanceResponse = new OperationalPerformanceResponse();
+        List<Map<MetricType, List<OperationalPerformance>>> operationalPerformanceList = new ArrayList<>();
+        for (MetricType metricType : operationalPerformanceRequest.getMetrics()) {
+            AggregationService aggregationService = getMetricHandler(metricType);
+            List<OperationalPerformance> operationalPerformances = aggregationService.getAggregatedOperationalPerformance(metricType,
+                    operationalPerformanceRequest.getVendorSites(), operationalPerformanceRequest.getWarehouses());
+            operationalPerformanceList.add(new HashMap<MetricType, List<OperationalPerformance>>(){{
+                put(metricType, operationalPerformances);
+            }});
+
+        }
+        operationalPerformanceResponse.setOperationalPerformance(operationalPerformanceList);
+        return operationalPerformanceResponse;
     }
 
     public AggregatedDetailedResponse getAggregatedDetails(AggregatedDetailedRequest aggregatedDetailedRequest){
@@ -46,5 +65,9 @@ public class BaseAggregationService {
 
     private AggregationService getEntityHandler(EntityType entityType){
         return entityRepository.getHandler(entityType);
+    }
+
+    private AggregationService getMetricHandler(MetricType metricType){
+        return metricRepository.getHandler(metricType);
     }
 }

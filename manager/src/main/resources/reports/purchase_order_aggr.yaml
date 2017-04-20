@@ -9,4 +9,8 @@ fields:
   - name: month
   - name: status
   - name: received_quantity
-  - name: amount
+  - name: cancelled_quantity
+  - name: pending_quantity
+  - name: received_amount
+  - name: cancelled_amount
+  - name: pending_amount

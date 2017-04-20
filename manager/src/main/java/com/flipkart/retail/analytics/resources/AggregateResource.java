@@ -1,10 +1,7 @@
 package com.flipkart.retail.analytics.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.flipkart.retail.analytics.dto.AggregatedDetailedRequest;
-import com.flipkart.retail.analytics.dto.AggregatedDetailedResponse;
-import com.flipkart.retail.analytics.dto.AggregatedPurchasingTrendRequest;
-import com.flipkart.retail.analytics.dto.AggregatedPurchasingTrendResponse;
+import com.flipkart.retail.analytics.dto.*;
 import com.flipkart.retail.analytics.service.BaseAggregationService;
 import com.flipkart.retail.analytics.service.aggregated.PurchaseOrderService;
 import com.google.inject.Inject;
@@ -35,9 +32,19 @@ public class AggregateResource {
         return Response.ok(aggregatedPurchasingTrendResponse).build();
     }
 
+    @Path("/operational-performance")
+    @POST
+    @ApiOperation(value = "Aggregated operational performance")
+    @Timed
+    public Response getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest){
+        OperationalPerformanceResponse operationalPerformanceResponse = baseAggregationService
+                .getAggregatedOperationalPerformance(operationalPerformanceRequest);
+        return Response.ok(operationalPerformanceResponse).build();
+    }
+
     @Path("/details")
     @POST
-    @ApiOperation(value = "Aggregated purchase order")
+    @ApiOperation(value = "Aggregated details")
     @Timed
     public Response getAggregatedPO(AggregatedDetailedRequest aggregatedDetailedRequest){
         AggregatedDetailedResponse aggregatedDetailedResponse = baseAggregationService.getAggregatedDetails

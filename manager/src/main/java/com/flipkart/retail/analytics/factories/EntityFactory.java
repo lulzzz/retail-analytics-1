@@ -9,12 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.reflections.Reflections;
 
 import javax.inject.Inject;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class EntityHandlerFactory implements Managed{
+public class EntityFactory implements Managed{
     private final String PACKAGE = "com.flipkart.retail.analytics.service.aggregated";
 
     private final EntityRepository entityRepository;
@@ -33,12 +32,7 @@ public class EntityHandlerFactory implements Managed{
     private void registerHandler(Class<AggregationService> klass){
         EntityHandler entityHandlerAnnotation = klass.getAnnotation(EntityHandler.class);
         AggregationService aggregationService = injector.getInstance(klass);
-        if(Objects.nonNull(entityHandlerAnnotation)){
-            EntityHandler.Type[] entityTypeAnnotations = entityHandlerAnnotation.value();
-            for(EntityHandler.Type entityTypeAnnotation : entityTypeAnnotations){
-                entityRepository.addHandler(entityTypeAnnotation.entityType(), aggregationService);
-            }
-        }
+        entityRepository.addHandler(entityHandlerAnnotation.entityType(), aggregationService);
     }
 
     private Set<Class<AggregationService>> getAllHandlers(){

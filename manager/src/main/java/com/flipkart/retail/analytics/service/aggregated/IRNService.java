@@ -3,9 +3,11 @@ package com.flipkart.retail.analytics.service.aggregated;
 import com.flipkart.retail.analytics.annotations.EntityHandler;
 import com.flipkart.retail.analytics.config.ReportsConfiguration;
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
+import com.flipkart.retail.analytics.dto.OperationalPerformance;
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
 import com.flipkart.retail.analytics.dto.purchasingTrend.IRNPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
+import com.flipkart.retail.analytics.enums.MetricType;
 import com.flipkart.retail.analytics.persistence.IRNDao;
 import com.flipkart.retail.analytics.persistence.entity.IRN;
 import com.flipkart.retail.analytics.service.AggregationService;
@@ -16,9 +18,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-@EntityHandler({
-        @EntityHandler.Type(entityType = EntityType.IRN)
-})
+@EntityHandler(entityType = EntityType.IRN)
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class IRNService implements AggregationService {
     private final IRNDao irnDao;
@@ -38,8 +38,8 @@ public class IRNService implements AggregationService {
     }
 
     @Override
-    public void getAggregatedOperationalPerformance(List<String> vendorSites, List<String> warehouses) {
-
+    public List<OperationalPerformance> getAggregatedOperationalPerformance(MetricType metricType, List<String> vendorSites, List<String> warehouses) {
+        return null;
     }
 
     @Override

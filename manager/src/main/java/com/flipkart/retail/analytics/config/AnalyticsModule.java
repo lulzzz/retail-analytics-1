@@ -1,9 +1,10 @@
 package com.flipkart.retail.analytics.config;
 
-import com.flipkart.retail.analytics.factories.EntityHandlerFactory;
+import com.flipkart.retail.analytics.factories.EntityFactory;
 import com.flipkart.retail.analytics.persistence.*;
 import com.flipkart.retail.analytics.persistence.impl.*;
 import com.flipkart.retail.analytics.repository.EntityRepository;
+import com.flipkart.retail.analytics.repository.MetricRepository;
 import com.flipkart.retail.analytics.resources.AggregatedPaymentResource;
 import com.flipkart.retail.analytics.resources.InvoiceResource;
 import com.flipkart.retail.analytics.resources.PaymentResource;
@@ -54,7 +55,8 @@ public class AnalyticsModule extends AbstractModule {
         bind(QCDao.class).to(QCDaoImpl.class).in(Singleton.class);
         bind(ReturnOrderDao.class).to(ReturnOrderDaoImpl.class).in(Singleton.class);
         bind(EntityRepository.class).in(Singleton.class);
-        bind(EntityHandlerFactory.class).in(Singleton.class);
+        bind(MetricRepository.class).in(Singleton.class);
+        bind(EntityFactory.class).in(Singleton.class);
         bind(InvoiceResource.class).in(Singleton.class);
         bind(PurchaseOrderService.class).in(Singleton.class);
         bind(ReturnOrderService.class).in(Singleton.class);

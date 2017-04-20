@@ -9,7 +9,8 @@ fields:
   - name: month
   - name: roi_status
   - name: quantity
-  - name: amount
   - name: lost_quantity
   - name: processed_quantity
+  - name: total_amount
+  - name: processed_amount
 

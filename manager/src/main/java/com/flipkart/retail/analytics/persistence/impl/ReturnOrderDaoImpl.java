@@ -36,6 +36,26 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
     }
 
     @Override
+    public List<ReturnOrder> getROApprovalTAT(String tableName, List<String> vendorSites, List<String> warehouses) {
+        return null;
+    }
+
+    @Override
+    public List<ReturnOrder> getROApprovedEager(String tableName, List<String> vendorSites, List<String> warehouses) {
+        return null;
+    }
+
+    @Override
+    public List<ReturnOrder> getRORejected(String tableName, List<String> vendorSites, List<String> warehouses) {
+        return null;
+    }
+
+    @Override
+    public List<ReturnOrder> getROWithoutAction(String tableName, List<String> vendorSites, List<String> warehouses) {
+        return null;
+    }
+
+    @Override
     public List<ReturnOrder> getreturnOrderDetails(String tableName, List<String> vendorSites) {
         String query = getRODetailsQuery(tableName, vendorSites);
         return jdbcTemplate.query(query, new ResultSetExtractor<List<ReturnOrder>>() {
@@ -56,12 +76,12 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
     }
 
     private String getROQuery(String tableName, List<String> vendorSites, List<String> warehouses){
-        return "select month, currency, SUM(quantity), SUM(amount) from " + tableName + " where vs_id IN ('" + Joiner.on("','").join(vendorSites)
+        return "select month, currency, SUM(quantity), SUM(total_amount) from " + tableName + " where vs_id IN ('" + Joiner.on("','").join(vendorSites)
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
     }
 
     private String getRODetailsQuery(String tablename, List<String> vendorSites){
-        return "SELECT roi_status, currency, SUM(processed_quantity), SUM(amount) from " + tablename + " WHERE vs_id IN ('" +
+        return "SELECT roi_status, currency, SUM(quantity), SUM(total_amount) from " + tablename + " WHERE vs_id IN ('" +
                 Joiner.on("','").join(vendorSites) + "') GROUP BY currency, roi_status;";
     }
 }

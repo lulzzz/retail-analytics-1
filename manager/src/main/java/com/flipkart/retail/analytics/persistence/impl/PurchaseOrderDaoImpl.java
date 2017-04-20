@@ -36,6 +36,29 @@ public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
     }
 
     @Override
+    public List<PurchaseOrder> getLeadTime(String tableName, List<String> vendorSites, List<String> warehouses) {
+        String query = getLeadTimeQuery(tableName, vendorSites, warehouses);
+        return jdbcTemplate.query(query, new ResultSetExtractor<List<PurchaseOrder>>() {
+            @Override
+            public List<PurchaseOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+                while (rs.next()) {
+                    PurchaseOrder purchaseOrder = new PurchaseOrder();
+                    purchaseOrder.setMonth(rs.getString(1));
+                    purchaseOrder.setAmount(rs.getDouble(2));
+                    purchaseOrderList.add(purchaseOrder);
+                }
+                return purchaseOrderList;
+            }
+        });
+    }
+
+    @Override
+    public List<PurchaseOrder> getFillRate(String tableName, List<String> vendorSites, List<String> warehouses) {
+        return null;
+    }
+
+    @Override
     public List<PurchaseOrder> getPurchaseOrderDetails(String tableName, List<String> vendorSites) {
         String query = getPoDetailsQuery(tableName, vendorSites);
         return jdbcTemplate.query(query, new ResultSetExtractor<List<PurchaseOrder>>() {
@@ -56,13 +79,19 @@ public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
     }
 
     private String getPoQuery(String tableName, List<String> vendorSites, List<String> warehouses){
-        return "SELECT month, currency, SUM(received_quantity), SUM(amount) from " + tableName + " WHERE vs_id IN ('" +
+        return "SELECT month, currency, SUM(received_quantity), SUM(received_amount) from " + tableName + " WHERE vs_id IN ('" +
                 Joiner.on("','").join(vendorSites)
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
     }
 
-    private String getPoDetailsQuery(String tablename, List<String> vendorSites){
-        return "SELECT status, currency, SUM(received_quantity), SUM(amount) from " + tablename + " WHERE vs_id IN ('" +
+    private String getPoDetailsQuery(String tableName, List<String> vendorSites){
+        return "SELECT status, currency, SUM(received_quantity), SUM(received_amount) from " + tableName + " WHERE vs_id IN ('" +
                 Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
+    }
+
+    private String getLeadTimeQuery(String tableName, List<String> vendorSites, List<String> warehouses) {
+        return "SELECT month, 1 from " + tableName + " WHERE vs_id IN ('" +
+                Joiner.on("','").join(vendorSites)
+                + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month";
     }
 }

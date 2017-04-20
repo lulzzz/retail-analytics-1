@@ -1,6 +1,6 @@
 package com.flipkart.retail.analytics.annotations;
 
-import com.flipkart.retail.analytics.enums.EntityType;
+import com.flipkart.retail.analytics.enums.MetricType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,6 +9,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})
-public @interface EntityHandler {
-    EntityType entityType();
+public @interface MetricHandler {
+    Type[] value() default {};
+
+    @interface Type {
+        MetricType metricType();
+    }
 }
