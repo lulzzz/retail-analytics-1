@@ -1,5 +1,6 @@
 package com.flipkart.retail.analytics.persistence.impl;
 
+import com.flipkart.retail.analytics.dto.aggregatedDetails.ROAggregatedDetails;
 import com.flipkart.retail.analytics.persistence.ReturnOrderDao;
 import com.flipkart.retail.analytics.persistence.entity.ReturnOrder;
 import com.google.common.base.Joiner;
@@ -56,21 +57,24 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
     }
 
     @Override
-    public List<ReturnOrder> getreturnOrderDetails(String tableName, List<String> vendorSites) {
+    public List<ROAggregatedDetails> getReturnOrderDetails(String tableName, List<String> vendorSites) {
         String query = getRODetailsQuery(tableName, vendorSites);
-        return jdbcTemplate.query(query, new ResultSetExtractor<List<ReturnOrder>>() {
+        return jdbcTemplate.query(query, new ResultSetExtractor<List<ROAggregatedDetails>>() {
             @Override
-            public List<ReturnOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<ReturnOrder> returnOrderList = new ArrayList<>();
+            public List<ROAggregatedDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<ROAggregatedDetails> roAggregatedDetailsList = new ArrayList<>();
                 while (rs.next()) {
-                    ReturnOrder returnOrder = new ReturnOrder();
-                    returnOrder.setStatus(rs.getString(1));
-                    returnOrder.setCurrency(rs.getString(2));
-                    returnOrder.setQuantity(rs.getInt(3));
-                    returnOrder.setAmount(rs.getDouble(4));
-                    returnOrderList.add(returnOrder);
+                    ROAggregatedDetails roAggregatedDetails = new ROAggregatedDetails();
+                    roAggregatedDetails.setStatus(rs.getString(1));
+                    roAggregatedDetails.setCurrency(rs.getString(2));
+                    roAggregatedDetails.setUniqueProducts(rs.getInt(3));
+                    roAggregatedDetails.setTotalUnits(rs.getLong(4));
+                    roAggregatedDetails.setTotalProcessedUnits(rs.getLong(5));
+                    roAggregatedDetails.setTotalAmount(rs.getDouble(6));
+                    roAggregatedDetails.setTotalProcessedAmount(rs.getDouble(7));
+                    roAggregatedDetailsList.add(roAggregatedDetails);
                 }
-                return returnOrderList;
+                return roAggregatedDetailsList;
             }
         });
     }
@@ -81,7 +85,8 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
     }
 
     private String getRODetailsQuery(String tablename, List<String> vendorSites){
-        return "SELECT roi_status, currency, SUM(quantity), SUM(total_amount) from " + tablename + " WHERE vs_id IN ('" +
-                Joiner.on("','").join(vendorSites) + "') GROUP BY currency, roi_status;";
+        return "SELECT roi_status, currency, COUNT(DISTINCT(`fsn`)), SUM(quantity), SUM(processed_quantity), SUM" +
+                "(total_amount), SUM(processed_amount) from " + tablename + " WHERE vs_id IN ('" + Joiner.on("','")
+                .join(vendorSites) + "') GROUP BY currency, roi_status;";
     }
 }

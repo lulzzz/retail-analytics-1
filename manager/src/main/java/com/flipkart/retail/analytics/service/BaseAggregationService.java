@@ -54,7 +54,8 @@ public class BaseAggregationService {
         for(EntityType entityType : aggregatedDetailedRequest.getEntities()){
             AggregationService aggregationService = getEntityHandler(entityType);
             List<AggregatedDetails> aggregatedDetails = aggregationService.getDetailedResponse
-                    (aggregatedDetailedRequest.getVendorSites());
+                    (aggregatedDetailedRequest.getVendorSites(), aggregatedDetailedRequest.getFromMonth(),
+                            aggregatedDetailedRequest.getToMonth());
             aggregatedDetailsList.add(new HashMap<EntityType, List<AggregatedDetails>>(){{
                 put(entityType, aggregatedDetails);
             }});

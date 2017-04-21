@@ -44,7 +44,7 @@ public class InvoiceService implements AggregationService {
     }
 
     @Override
-    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites) {
+    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
         return null;
     }
 }

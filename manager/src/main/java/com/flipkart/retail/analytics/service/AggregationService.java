@@ -12,5 +12,5 @@ public interface AggregationService {
 
     List<OperationalPerformance> getAggregatedOperationalPerformance(MetricType metricType, List<String> vendorSites, List<String> warehouses);
 
-    List<AggregatedDetails> getDetailedResponse(List<String> vendorSites);
+    List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth);
 }

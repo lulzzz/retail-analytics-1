@@ -6,6 +6,7 @@ import com.flipkart.retail.analytics.config.ReportsConfiguration;
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
 import com.flipkart.retail.analytics.dto.OperationalPerformance;
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import com.flipkart.retail.analytics.dto.aggregatedDetails.ROAggregatedDetails;
 import com.flipkart.retail.analytics.dto.purchasingTrend.ROPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.enums.MetricType;
@@ -50,13 +51,11 @@ public class ReturnOrderService implements AggregationService {
     }
 
     @Override
-    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites) {
-        List<ReturnOrder> returnOrderList = returnOrderDao.getreturnOrderDetails(getROTable(), vendorSites);
+    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
+        List<ROAggregatedDetails> returnOrderList = returnOrderDao.getReturnOrderDetails(getROTable(), vendorSites);
         List<AggregatedDetails> aggregatedDetailsList = new ArrayList<>();
-        for(ReturnOrder returnOrder : returnOrderList){
-            AggregatedDetails aggregatedDetails = new AggregatedDetails(returnOrder.getStatus(), returnOrder
-                    .getCurrency(), returnOrder.getQuantity(), returnOrder.getAmount());
-            aggregatedDetailsList.add(aggregatedDetails);
+        for(ROAggregatedDetails roAggregatedDetails : returnOrderList){
+            aggregatedDetailsList.add(roAggregatedDetails);
         }
         return aggregatedDetailsList;
     }

@@ -9,6 +9,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,7 +47,7 @@ public class AggregateResource {
     @POST
     @ApiOperation(value = "Aggregated details")
     @Timed
-    public Response getAggregatedPO(AggregatedDetailedRequest aggregatedDetailedRequest){
+    public Response getAggregatedPO(@Valid AggregatedDetailedRequest aggregatedDetailedRequest){
         AggregatedDetailedResponse aggregatedDetailedResponse = baseAggregationService.getAggregatedDetails
                 (aggregatedDetailedRequest);
         return Response.ok(aggregatedDetailedResponse).build();

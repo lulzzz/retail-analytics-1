@@ -6,6 +6,7 @@ import com.flipkart.retail.analytics.config.ReportsConfiguration;
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
 import com.flipkart.retail.analytics.dto.OperationalPerformance;
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import com.flipkart.retail.analytics.dto.aggregatedDetails.POAggregatedDetails;
 import com.flipkart.retail.analytics.dto.purchasingTrend.POPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.enums.MetricType;
@@ -66,13 +67,11 @@ public class PurchaseOrderService implements AggregationService {
     }
 
     @Override
-    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites) {
-        List<PurchaseOrder> purchaseOrderList = purchaseOrderDao.getPurchaseOrderDetails(getPoTable(), vendorSites);
+    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
+        List<POAggregatedDetails> poAggregatedDetailsList = purchaseOrderDao.getPurchaseOrderDetails(getPoTable(), vendorSites);
         List<AggregatedDetails> aggregatedDetailsList = new ArrayList<>();
-        for(PurchaseOrder purchaseOrder : purchaseOrderList){
-            AggregatedDetails aggregatedDetails = new AggregatedDetails(purchaseOrder.getStatus(), purchaseOrder
-                    .getCurrency(), purchaseOrder.getQuantity(), purchaseOrder.getAmount());
-            aggregatedDetailsList.add(aggregatedDetails);
+        for(POAggregatedDetails poAggregatedDetails : poAggregatedDetailsList){
+            aggregatedDetailsList.add(poAggregatedDetails);
         }
         return aggregatedDetailsList;
     }
