@@ -26,10 +26,10 @@ public class PaymentResource {
     private PaymentsService paymentsService;
 
     @GET
-    @Path("/lastPayment")
-    @ApiOperation(value = "lastPayment")
+    @Path("/last-payment")
+    @ApiOperation(value = "last-payment")
     @Timed
-    public Response getLastPaymentByVs(@NotNull @QueryParam("vendorSiteIds") String vendorSiteId) {
+    public Response getLastPaymentByVs(@NotNull @QueryParam("vendor_site_ids") String vendorSiteId) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
         VendorSitePaymentsDetails vendorSitePaymentsDetails = paymentsService.getLastPaymentByVs(vendorSiteIds);
         if (vendorSitePaymentsDetails == null) {

@@ -1,16 +1,13 @@
 package com.flipkart.retail.analytics.payments.dto.response;
 
-import com.flipkart.retail.analytics.persistence.utility.Currencies;
 import lombok.*;
 
 import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
+@Data
 public class VendorSiteYearlyPaymentRecord {
 
 
@@ -20,7 +17,6 @@ public class VendorSiteYearlyPaymentRecord {
 
     private String endYear;
 
-    private Currencies currency;
+    private List<PaymentCurrencyMap> payments;
 
-    private BigDecimal amount;
 }

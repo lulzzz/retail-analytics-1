@@ -22,7 +22,7 @@ public class NativeManagerImpl {
 
 
     public List<VendorSiteYearlyPayment> getPaymentByVendorSites(List<String> vendorSiteIds, String startYear, String endYear) {
-        String query = "select vendor_site_id, ROUND(sum(amount),3) as amount, currency from aggregated_payments where vendor_site_id in (:vendorSiteIds) and (month between :startYear and :endYear) group by vendor_site_id";
+        String query = "select ROUND(sum(amount),3) as amount, currency from aggregated_payments where vendor_site_id in (:vendorSiteIds) and (month between :startYear and :endYear) group by currency";
         return  entityManagerProvider.get()
                 .createNativeQuery(query, VendorSiteYearlyPayment.class)
                 .setParameter("vendorSiteIds",vendorSiteIds)

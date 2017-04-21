@@ -41,7 +41,7 @@ public class InvoiceResource {
     }
 
     @GET
-    @Path("/{invoice_id}/payment_details")
+    @Path("/{invoice_id}/payment-details")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
     public Response getPaymentsDetails(@NotEmpty @PathParam("invoice_id") String invoiceId)

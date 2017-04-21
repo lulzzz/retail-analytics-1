@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 public class VendorSiteYearlyPayment {
 
     @Id
-    String vendorSiteId;
+    String currency;
 
     BigDecimal amount;
 
-    String currency;
+
 
 }
