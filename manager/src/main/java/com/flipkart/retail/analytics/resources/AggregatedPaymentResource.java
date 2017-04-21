@@ -3,7 +3,6 @@ package com.flipkart.retail.analytics.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.flipkart.retail.analytics.common.YearClassifier;
-import com.flipkart.retail.analytics.payments.dto.response.VendorSiteYearlyPaymentRecord;
 import com.flipkart.retail.analytics.payments.services.PaymentAggregatorService;
 import com.google.inject.Inject;
 import com.wordnik.swagger.annotations.Api;
@@ -21,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-@Path("/aggregatedPayments")
-@Api(value = "/aggregatedPayments", description = "vendorSite aggregated details")
+@Path("/aggregated-payments")
+@Api(value = "/aggregated-payments", description = "vendorSite aggregated details")
 @Produces(MediaType.APPLICATION_JSON)
 public class AggregatedPaymentResource {
 
@@ -31,10 +30,10 @@ public class AggregatedPaymentResource {
    private PaymentAggregatorService paymentAggregatorService;
 
     @GET
-    @Path("/lastYear")
+    @Path("/last-year")
     @ApiOperation(value = "Payment aggregated data for vendor")
     @Timed
-    public Response getVendorSitePaymentDetails(@NotNull @QueryParam("vendorSiteId") String vendorSiteId,
+    public Response getVendorSitePaymentDetails(@NotNull @QueryParam("vendor_site_ids") String vendorSiteId,
                                                 @NotNull @QueryParam("year") YearClassifier year) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
         return Response.ok(paymentAggregatorService.getLastYearPaymentDetails(vendorSiteIds, year)).build();
