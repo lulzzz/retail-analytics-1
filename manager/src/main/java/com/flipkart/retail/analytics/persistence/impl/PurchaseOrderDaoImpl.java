@@ -55,7 +55,7 @@ public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
 
     @Override
     public List<PurchaseOrder> getFillRate(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return null;
+        return getLeadTime(tableName, vendorSites, warehouses);
     }
 
     @Override
