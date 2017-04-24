@@ -1,6 +1,5 @@
-package com.flipkart.retail.analytics.persistence.impl;
+package com.flipkart.retail.analytics.persistence;
 
-import com.flipkart.retail.analytics.persistence.QCDao;
 import com.flipkart.retail.analytics.persistence.entity.QC;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class QCDaoImpl implements QCDao {
+public class QCManager {
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
     public List<QC> getQC(String tableName, List<String> vendorSites, List<String> warehouses) {
         String qcQuery = getQCQuery(tableName, vendorSites, warehouses);
         return jdbcTemplate.query(qcQuery, new ResultSetExtractor<List<QC>>() {

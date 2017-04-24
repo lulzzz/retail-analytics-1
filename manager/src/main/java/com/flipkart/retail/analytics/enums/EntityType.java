@@ -5,6 +5,5 @@ public enum EntityType {
     RETURN_ORDER,
     IRN,
     INVOICE,
-    QUALITY_CHECK,
-    PAYMENT
+    QUALITY_CHECK
 }

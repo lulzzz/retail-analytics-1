@@ -9,4 +9,5 @@ public class ReportsConfiguration {
     private String irn;
     private String invoice;
     private String qc;
+    private String metrics;
 }

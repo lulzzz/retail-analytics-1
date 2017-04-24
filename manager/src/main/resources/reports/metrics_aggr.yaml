@@ -1,0 +1,8 @@
+reportName: performance_metrics_report
+preparationStrategy: DELETE_ALL
+factTableName: performance_metrics_1
+fields:
+  - name: month
+  - name: vs_id
+  - name: fk_warehouse
+#ToDo : Add other table columns

@@ -1,7 +1,6 @@
-package com.flipkart.retail.analytics.persistence.impl;
+package com.flipkart.retail.analytics.persistence;
 
 import com.flipkart.retail.analytics.dto.aggregatedDetails.ROAggregatedDetails;
-import com.flipkart.retail.analytics.persistence.ReturnOrderDao;
 import com.flipkart.retail.analytics.persistence.entity.ReturnOrder;
 import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class ReturnOrderDaoImpl implements ReturnOrderDao {
+public class ReturnOrderManager {
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
     public List<ReturnOrder> getReturnOrders(String tableName, List<String> vendorSites, List<String> warehouses) {
         String roQuery = getROQuery(tableName, vendorSites, warehouses);
         return jdbcTemplate.query(roQuery, new ResultSetExtractor<List<ReturnOrder>>() {
@@ -36,27 +34,6 @@ public class ReturnOrderDaoImpl implements ReturnOrderDao {
         });
     }
 
-    @Override
-    public List<ReturnOrder> getROApprovalTAT(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return null;
-    }
-
-    @Override
-    public List<ReturnOrder> getROApprovedEager(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return null;
-    }
-
-    @Override
-    public List<ReturnOrder> getRORejected(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return null;
-    }
-
-    @Override
-    public List<ReturnOrder> getROWithoutAction(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return null;
-    }
-
-    @Override
     public List<ROAggregatedDetails> getReturnOrderDetails(String tableName, List<String> vendorSites) {
         String query = getRODetailsQuery(tableName, vendorSites);
         return jdbcTemplate.query(query, new ResultSetExtractor<List<ROAggregatedDetails>>() {

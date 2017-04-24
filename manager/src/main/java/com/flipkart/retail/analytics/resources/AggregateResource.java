@@ -3,14 +3,17 @@ package com.flipkart.retail.analytics.resources;
 import com.codahale.metrics.annotation.Timed;
 import com.flipkart.retail.analytics.dto.*;
 import com.flipkart.retail.analytics.service.BaseAggregationService;
-import com.flipkart.retail.analytics.service.aggregated.PurchaseOrderService;
+import com.flipkart.retail.analytics.service.PerformanceMetricsService;
 import com.google.inject.Inject;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -21,15 +24,16 @@ import javax.ws.rs.core.Response;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class AggregateResource {
     private final BaseAggregationService baseAggregationService;
-    private final PurchaseOrderService purchaseOrderService;
+    private final PerformanceMetricsService performanceMetricsService;
 
     @Path("/purchasing-trends")
     @POST
     @ApiOperation(value = "Aggregated purchasing trends")
     @Timed
-    public Response getAggregatedPurchasingTrends(AggregatedPurchasingTrendRequest aggregatedPurchasingTrendRequest){
-        AggregatedPurchasingTrendResponse aggregatedPurchasingTrendResponse = baseAggregationService.getAggregatedPurchasingTrends(
-                aggregatedPurchasingTrendRequest.getEntities(), aggregatedPurchasingTrendRequest.getVendorSites(), aggregatedPurchasingTrendRequest.getWarehouses());
+    public Response getAggregatedPurchasingTrends(AggregatedPurchasingTrendRequest aggregatedPurchasingTrendRequest) {
+        AggregatedPurchasingTrendResponse aggregatedPurchasingTrendResponse = baseAggregationService
+                .getAggregatedPurchasingTrends(aggregatedPurchasingTrendRequest.getEntities(),
+                        aggregatedPurchasingTrendRequest.getVendorSites(), aggregatedPurchasingTrendRequest.getWarehouses());
         return Response.ok(aggregatedPurchasingTrendResponse).build();
     }
 
@@ -37,8 +41,8 @@ public class AggregateResource {
     @POST
     @ApiOperation(value = "Aggregated operational performance")
     @Timed
-    public Response getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest){
-        OperationalPerformanceResponse operationalPerformanceResponse = baseAggregationService
+    public Response getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest) {
+        OperationalPerformanceResponse operationalPerformanceResponse = performanceMetricsService
                 .getAggregatedOperationalPerformance(operationalPerformanceRequest);
         return Response.ok(operationalPerformanceResponse).build();
     }
@@ -47,7 +51,7 @@ public class AggregateResource {
     @POST
     @ApiOperation(value = "Aggregated details")
     @Timed
-    public Response getAggregatedPO(@Valid AggregatedDetailedRequest aggregatedDetailedRequest){
+    public Response getAggregatedPO(@Valid AggregatedDetailedRequest aggregatedDetailedRequest) {
         AggregatedDetailedResponse aggregatedDetailedResponse = baseAggregationService.getAggregatedDetails
                 (aggregatedDetailedRequest);
         return Response.ok(aggregatedDetailedResponse).build();

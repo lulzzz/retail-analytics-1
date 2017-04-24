@@ -2,7 +2,7 @@ dataSource:
   driverClass: com.mysql.jdbc.Driver
   user: root
   password:
-  url: jdbc:mysql://127.0.0.1/aggregation_pipeline
+  url: jdbc:mysql://127.0.0.1/aggregation_pipeline_!
   properties:
     charSet: UTF-8
   maxWaitForConnection: 1s
@@ -81,3 +81,4 @@ reportsConfiguration:
   irn: irn_aggr_report
   invoice: invoice_aggr_report
   qc: qc_aggr_report
+  metrics: performance_metrics_report

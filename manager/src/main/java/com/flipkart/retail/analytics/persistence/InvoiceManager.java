@@ -1,6 +1,5 @@
-package com.flipkart.retail.analytics.persistence.impl;
+package com.flipkart.retail.analytics.persistence;
 
-import com.flipkart.retail.analytics.persistence.InvoiceDao;
 import com.flipkart.retail.analytics.persistence.entity.Invoice;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class InvoiceDaoImpl implements InvoiceDao {
+public class InvoiceManager {
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
     public List<Invoice> getInvoice(String tableName, List<String> vendorSites, List<String> warehouses) {
         String invoiceQuery = getInvoiceQuery(tableName, vendorSites, warehouses);
         return jdbcTemplate.query(invoiceQuery, new ResultSetExtractor<List<Invoice>>() {

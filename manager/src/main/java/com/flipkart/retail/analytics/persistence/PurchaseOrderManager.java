@@ -1,7 +1,6 @@
-package com.flipkart.retail.analytics.persistence.impl;
+package com.flipkart.retail.analytics.persistence;
 
 import com.flipkart.retail.analytics.dto.aggregatedDetails.POAggregatedDetails;
-import com.flipkart.retail.analytics.persistence.PurchaseOrderDao;
 import com.flipkart.retail.analytics.persistence.entity.PurchaseOrder;
 import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
+public class PurchaseOrderManager {
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
     public List<PurchaseOrder> getPurchaseOrders(String tableName, List<String> vendorSites, List<String> warehouses) {
         String poQuery = getPoQuery(tableName, vendorSites, warehouses);
         return jdbcTemplate.query(poQuery, new ResultSetExtractor<List<PurchaseOrder>>() {
@@ -36,32 +34,9 @@ public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
         });
     }
 
-    @Override
-    public List<PurchaseOrder> getLeadTime(String tableName, List<String> vendorSites, List<String> warehouses) {
-        String query = getLeadTimeQuery(tableName, vendorSites, warehouses);
-        return jdbcTemplate.query(query, new ResultSetExtractor<List<PurchaseOrder>>() {
-            @Override
-            public List<PurchaseOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
-                while (rs.next()) {
-                    PurchaseOrder purchaseOrder = new PurchaseOrder();
-                    purchaseOrder.setMonth(rs.getString(1));
-                    purchaseOrder.setAmount(rs.getDouble(2));
-                    purchaseOrderList.add(purchaseOrder);
-                }
-                return purchaseOrderList;
-            }
-        });
-    }
-
-    @Override
-    public List<PurchaseOrder> getFillRate(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return getLeadTime(tableName, vendorSites, warehouses);
-    }
-
-    @Override
-    public List<POAggregatedDetails> getPurchaseOrderDetails(String tableName, List<String> vendorSites) {
-        String query = getPoDetailsQuery(tableName, vendorSites);
+    public List<POAggregatedDetails> getPurchaseOrderDetails(String tableName, List<String> vendorSites, String
+            fromMonth, String toMonth) {
+        String query = getPoDetailsQuery(tableName, vendorSites, fromMonth, toMonth);
         return jdbcTemplate.query(query, new ResultSetExtractor<List<POAggregatedDetails>>() {
             @Override
             public List<POAggregatedDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -90,15 +65,9 @@ public class PurchaseOrderDaoImpl implements PurchaseOrderDao {
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
     }
 
-    private String getPoDetailsQuery(String tableName, List<String> vendorSites){
+    private String getPoDetailsQuery(String tableName, List<String> vendorSites, String fromMonth, String toMonth){
         return "SELECT status, currency, COUNT(DISTINCT(`fsn`)), SUM(received_quantity), SUM(pending_quantity), SUM" +
                 "(cancelled_quantity), SUM(received_amount), SUM(pending_amount), SUM(cancelled_amount) from " +
                 tableName + " WHERE vs_id IN ('" + Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
-    }
-
-    private String getLeadTimeQuery(String tableName, List<String> vendorSites, List<String> warehouses) {
-        return "SELECT month, 1 from " + tableName + " WHERE vs_id IN ('" +
-                Joiner.on("','").join(vendorSites)
-                + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month";
     }
 }

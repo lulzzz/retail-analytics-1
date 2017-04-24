@@ -1,6 +1,5 @@
-package com.flipkart.retail.analytics.persistence.impl;
+package com.flipkart.retail.analytics.persistence;
 
-import com.flipkart.retail.analytics.persistence.IRNDao;
 import com.flipkart.retail.analytics.persistence.entity.IRN;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class IRNDaoImpl implements IRNDao {
+public class IRNManager {
     private final JdbcTemplate jdbcTemplate;
 
-    @Override
     public List<IRN> getIRNs(String tableName, List<String> vendorSites, List<String> warehouses) {
         String irnQuery = getIrnQuery(tableName, vendorSites, warehouses);
         return jdbcTemplate.query(irnQuery, new ResultSetExtractor<List<IRN>>() {
