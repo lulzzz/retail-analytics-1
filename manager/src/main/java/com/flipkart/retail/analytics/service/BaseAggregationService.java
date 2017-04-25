@@ -31,13 +31,13 @@ public class BaseAggregationService {
 
     public AggregatedDetailedResponse getAggregatedDetails(AggregatedDetailedRequest aggregatedDetailedRequest){
         AggregatedDetailedResponse aggregatedDetailedResponse = new AggregatedDetailedResponse();
-        List<Map<EntityType, List<AggregatedDetails>>> aggregatedDetailsList = new ArrayList<>();
+        List<Map<EntityType, AggregatedDetails>> aggregatedDetailsList = new ArrayList<>();
         for(EntityType entityType : aggregatedDetailedRequest.getEntities()){
             AggregationService aggregationService = getEntityHandler(entityType);
-            List<AggregatedDetails> aggregatedDetails = aggregationService.getDetailedResponse
+            AggregatedDetails aggregatedDetails = aggregationService.getDetailedResponse
                     (aggregatedDetailedRequest.getVendorSites(), aggregatedDetailedRequest.getFromMonth(),
                             aggregatedDetailedRequest.getToMonth());
-            aggregatedDetailsList.add(new HashMap<EntityType, List<AggregatedDetails>>(){{
+            aggregatedDetailsList.add(new HashMap<EntityType, AggregatedDetails>(){{
                 put(entityType, aggregatedDetails);
             }});
         }

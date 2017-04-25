@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class OperationalPerformance {
     private String month;
-    private Double value;
+    private String value;
 }

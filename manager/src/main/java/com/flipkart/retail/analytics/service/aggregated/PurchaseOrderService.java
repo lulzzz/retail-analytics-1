@@ -10,7 +10,7 @@ import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.persistence.PurchaseOrderManager;
 import com.flipkart.retail.analytics.persistence.entity.PurchaseOrder;
 import com.flipkart.retail.analytics.service.AggregationService;
-import com.flipkart.retail.analytics.utils.RetailAnalyticsUtils;
+import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -21,8 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PurchaseOrderService implements AggregationService {
     private final PurchaseOrderManager purchaseOrderManager;
-    private final RetailAnalyticsUtils retailAnalyticsUtils;
     private final ReportsConfiguration reportsConfiguration;
+    private final TableNameSelector tableNameSelector;
 
     @Override
     public List<PurchasingTrend> getAggregatedPurchasingTrend(List<String> vendorSites, List<String> warehouses) {
@@ -37,17 +37,18 @@ public class PurchaseOrderService implements AggregationService {
     }
 
     @Override
-    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
-        List<POAggregatedDetails> poAggregatedDetailsList = purchaseOrderManager.getPurchaseOrderDetails(getPoTable(),
+    public AggregatedDetails getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
+        List<POAggregatedDetails.PODetails> poDetails = purchaseOrderManager.getPurchaseOrderDetails(getPoTable(),
                 vendorSites, fromMonth, toMonth);
-        List<AggregatedDetails> aggregatedDetailsList = new ArrayList<>();
-        for(POAggregatedDetails poAggregatedDetails : poAggregatedDetailsList){
-            aggregatedDetailsList.add(poAggregatedDetails);
-        }
-        return aggregatedDetailsList;
+        Long pendingPO = purchaseOrderManager.getAggregatedPOCount(getMetricsTable(), vendorSites);
+        return new POAggregatedDetails(pendingPO, poDetails);
     }
 
     private String getPoTable(){
-        return retailAnalyticsUtils.getTableName(reportsConfiguration.getPurchaseOrder());
+        return tableNameSelector.getActiveTableName(reportsConfiguration.getPurchaseOrder());
+    }
+
+    private String getMetricsTable(){
+        return tableNameSelector.getActiveTableName(reportsConfiguration.getMetrics());
     }
 }

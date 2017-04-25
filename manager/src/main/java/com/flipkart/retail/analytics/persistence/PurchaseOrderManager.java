@@ -34,40 +34,59 @@ public class PurchaseOrderManager {
         });
     }
 
-    public List<POAggregatedDetails> getPurchaseOrderDetails(String tableName, List<String> vendorSites, String
-            fromMonth, String toMonth) {
-        String query = getPoDetailsQuery(tableName, vendorSites, fromMonth, toMonth);
-        return jdbcTemplate.query(query, new ResultSetExtractor<List<POAggregatedDetails>>() {
+    public List<POAggregatedDetails.PODetails> getPurchaseOrderDetails(String poTable, List<String> vendorSites,
+                                                                       String fromMonth, String toMonth) {
+        String query = getPoDetailsQuery(poTable, vendorSites, fromMonth, toMonth);
+        return jdbcTemplate.query(query, new ResultSetExtractor<List<POAggregatedDetails.PODetails>>() {
             @Override
-            public List<POAggregatedDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<POAggregatedDetails> poAggregatedDetailsList = new ArrayList<>();
+            public List<POAggregatedDetails.PODetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<POAggregatedDetails.PODetails> poAggregatedDetailsList = new ArrayList<>();
                 while (rs.next()) {
-                    POAggregatedDetails poAggregatedDetails = new POAggregatedDetails();
-                    poAggregatedDetails.setStatus(rs.getString(1));
-                    poAggregatedDetails.setCurrency(rs.getString(2));
-                    poAggregatedDetails.setUniqueProducts(rs.getInt(3));
-                    poAggregatedDetails.setTotalReceivedUnits(rs.getLong(4));
-                    poAggregatedDetails.setTotalPendingUnits(rs.getLong(5));
-                    poAggregatedDetails.setTotalCancelledUnits(rs.getLong(6));
-                    poAggregatedDetails.setTotalReceivedAmount(rs.getDouble(7));
-                    poAggregatedDetails.setTotalPendingAmount(rs.getDouble(8));
-                    poAggregatedDetails.setTotalCancelledAmount(rs.getDouble(9));
-                    poAggregatedDetailsList.add(poAggregatedDetails);
+                    POAggregatedDetails.PODetails poDetails = (new POAggregatedDetails()).new PODetails();
+                    poDetails.setStatus(rs.getString(1));
+                    poDetails.setCurrency(rs.getString(2));
+                    poDetails.setUniqueProducts(rs.getInt(3));
+                    poDetails.setReceivedUnits(rs.getLong(4));
+                    poDetails.setPendingUnits(rs.getLong(5));
+                    poDetails.setCancelledUnits(rs.getLong(6));
+                    poDetails.setReceivedAmount(rs.getDouble(7));
+                    poDetails.setPendingAmount(rs.getDouble(8));
+                    poDetails.setCancelledAmount(rs.getDouble(9));
+                    poAggregatedDetailsList.add(poDetails);
                 }
                 return poAggregatedDetailsList;
             }
         });
     }
 
-    private String getPoQuery(String tableName, List<String> vendorSites, List<String> warehouses){
-        return "SELECT month, currency, SUM(received_quantity), SUM(received_amount) from " + tableName + " WHERE vs_id IN ('" +
+    public Long getAggregatedPOCount(String tableName, List<String> vendorSites){
+        String query = getPoCountQuery(tableName, vendorSites);
+        return jdbcTemplate.query(query, new ResultSetExtractor<Long>() {
+            @Override
+            public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
+                if(rs.next()){
+                    return rs.getLong(1);
+                }
+                return null;
+            }
+        });
+    }
+
+    private String getPoQuery(String poTable, List<String> vendorSites, List<String> warehouses){
+        return "SELECT month, currency, SUM(received_quantity), SUM(received_amount) from " + poTable + " WHERE vs_id IN ('" +
                 Joiner.on("','").join(vendorSites)
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
     }
 
-    private String getPoDetailsQuery(String tableName, List<String> vendorSites, String fromMonth, String toMonth){
+    private String getPoDetailsQuery(String poTable, List<String> vendorSites, String fromMonth,
+                                     String toMonth){
         return "SELECT status, currency, COUNT(DISTINCT(`fsn`)), SUM(received_quantity), SUM(pending_quantity), SUM" +
                 "(cancelled_quantity), SUM(received_amount), SUM(pending_amount), SUM(cancelled_amount) from " +
-                tableName + " WHERE vs_id IN ('" + Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
+                poTable + " WHERE vs_id IN ('" + Joiner.on("','").join(vendorSites) + "') GROUP BY currency, status;";
+    }
+
+    private String getPoCountQuery(String metricTable, List<String> vendorSites){
+        return "SELECT SUM(aggregated_pending_po) from " + metricTable + " WHERE vs_id IN ('" + Joiner.on("','").join
+                (vendorSites) + "');";
     }
 }

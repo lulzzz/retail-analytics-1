@@ -8,9 +8,10 @@ import com.flipkart.retail.analytics.dto.aggregatedDetails.ROAggregatedDetails;
 import com.flipkart.retail.analytics.dto.purchasingTrend.ROPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.persistence.ReturnOrderManager;
+import com.flipkart.retail.analytics.persistence.entity.ROAggregatedCount;
 import com.flipkart.retail.analytics.persistence.entity.ReturnOrder;
 import com.flipkart.retail.analytics.service.AggregationService;
-import com.flipkart.retail.analytics.utils.RetailAnalyticsUtils;
+import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -21,8 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ReturnOrderService implements AggregationService {
     private final ReturnOrderManager returnOrderManager;
-    private final RetailAnalyticsUtils retailAnalyticsUtils;
     private final ReportsConfiguration reportsConfiguration;
+    private final TableNameSelector tableNameSelector;
 
     @Override
     public List<PurchasingTrend> getAggregatedPurchasingTrend(List<String> vendorSites, List<String> warehouses) {
@@ -37,16 +38,19 @@ public class ReturnOrderService implements AggregationService {
     }
 
     @Override
-    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
-        List<ROAggregatedDetails> returnOrderList = returnOrderManager.getReturnOrderDetails(getROTable(), vendorSites);
-        List<AggregatedDetails> aggregatedDetailsList = new ArrayList<>();
-        for(ROAggregatedDetails roAggregatedDetails : returnOrderList){
-            aggregatedDetailsList.add(roAggregatedDetails);
-        }
-        return aggregatedDetailsList;
+    public AggregatedDetails getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
+        List<ROAggregatedDetails.RODetails> roDetails = returnOrderManager.getReturnOrderDetails(getROTable(),
+                vendorSites);
+        ROAggregatedCount roAggregatedCount = returnOrderManager.getAggregatedROCount(getMetricsTable(), vendorSites);
+        return new ROAggregatedDetails(roAggregatedCount.getPendingRo(), roAggregatedCount.getApprovedRo(),
+                roAggregatedCount.getRejectedRo(), roDetails);
     }
 
     private String getROTable(){
-        return retailAnalyticsUtils.getTableName(reportsConfiguration.getReturnOrder());
+        return tableNameSelector.getActiveTableName(reportsConfiguration.getReturnOrder());
+    }
+
+    private String getMetricsTable(){
+        return tableNameSelector.getActiveTableName(reportsConfiguration.getMetrics());
     }
 }

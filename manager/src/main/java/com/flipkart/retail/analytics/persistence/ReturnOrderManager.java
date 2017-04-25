@@ -1,6 +1,7 @@
 package com.flipkart.retail.analytics.persistence;
 
 import com.flipkart.retail.analytics.dto.aggregatedDetails.ROAggregatedDetails;
+import com.flipkart.retail.analytics.persistence.entity.ROAggregatedCount;
 import com.flipkart.retail.analytics.persistence.entity.ReturnOrder;
 import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
@@ -34,36 +35,56 @@ public class ReturnOrderManager {
         });
     }
 
-    public List<ROAggregatedDetails> getReturnOrderDetails(String tableName, List<String> vendorSites) {
+    public List<ROAggregatedDetails.RODetails> getReturnOrderDetails(String tableName, List<String>
+            vendorSites) {
         String query = getRODetailsQuery(tableName, vendorSites);
-        return jdbcTemplate.query(query, new ResultSetExtractor<List<ROAggregatedDetails>>() {
+        return jdbcTemplate.query(query, new ResultSetExtractor<List<ROAggregatedDetails.RODetails>>() {
             @Override
-            public List<ROAggregatedDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<ROAggregatedDetails> roAggregatedDetailsList = new ArrayList<>();
+            public List<ROAggregatedDetails.RODetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<ROAggregatedDetails.RODetails> roAggregatedDetailsList = new ArrayList<>();
                 while (rs.next()) {
-                    ROAggregatedDetails roAggregatedDetails = new ROAggregatedDetails();
-                    roAggregatedDetails.setStatus(rs.getString(1));
-                    roAggregatedDetails.setCurrency(rs.getString(2));
-                    roAggregatedDetails.setUniqueProducts(rs.getInt(3));
-                    roAggregatedDetails.setTotalUnits(rs.getLong(4));
-                    roAggregatedDetails.setTotalProcessedUnits(rs.getLong(5));
-                    roAggregatedDetails.setTotalAmount(rs.getDouble(6));
-                    roAggregatedDetails.setTotalProcessedAmount(rs.getDouble(7));
-                    roAggregatedDetailsList.add(roAggregatedDetails);
+                    ROAggregatedDetails.RODetails roDetails = (new ROAggregatedDetails()).new RODetails();
+                    roDetails.setStatus(rs.getString(1));
+                    roDetails.setCurrency(rs.getString(2));
+                    roDetails.setUniqueProducts(rs.getInt(3));
+                    roDetails.setUnits(rs.getLong(4));
+                    roDetails.setProcessedUnits(rs.getLong(5));
+                    roDetails.setAmount(rs.getDouble(6));
+                    roDetails.setProcessedAmount(rs.getDouble(7));
+                    roAggregatedDetailsList.add(roDetails);
                 }
                 return roAggregatedDetailsList;
             }
         });
     }
 
-    private String getROQuery(String tableName, List<String> vendorSites, List<String> warehouses){
-        return "select month, currency, SUM(quantity), SUM(total_amount) from " + tableName + " where vs_id IN ('" + Joiner.on("','").join(vendorSites)
+    public ROAggregatedCount getAggregatedROCount(String tableName, List<String> vendorSites){
+        String query = getROCountQuery(tableName, vendorSites);
+        return jdbcTemplate.query(query, new ResultSetExtractor<ROAggregatedCount>() {
+            @Override
+            public ROAggregatedCount extractData(ResultSet rs) throws SQLException, DataAccessException {
+                ROAggregatedCount roAggregatedCount = new ROAggregatedCount();
+                if(rs.next()){
+                    roAggregatedCount = new ROAggregatedCount(rs.getLong(1), rs.getLong(2), rs.getLong(3));
+                }
+                return roAggregatedCount;
+            }
+        });
+    }
+
+    private String getROQuery(String roTable, List<String> vendorSites, List<String> warehouses){
+        return "select month, currency, SUM(quantity), SUM(total_amount) from " + roTable + " where vs_id IN ('" + Joiner.on("','").join(vendorSites)
                 + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
     }
 
-    private String getRODetailsQuery(String tablename, List<String> vendorSites){
+    private String getRODetailsQuery(String roTable, List<String> vendorSites){
         return "SELECT roi_status, currency, COUNT(DISTINCT(`fsn`)), SUM(quantity), SUM(processed_quantity), SUM" +
-                "(total_amount), SUM(processed_amount) from " + tablename + " WHERE vs_id IN ('" + Joiner.on("','")
+                "(total_amount), SUM(processed_amount) from " + roTable + " WHERE vs_id IN ('" + Joiner.on("','")
                 .join(vendorSites) + "') GROUP BY currency, roi_status;";
+    }
+
+    private String getROCountQuery(String metricTable, List<String> vendorSites){
+        return "SELECT SUM(aggregated_pending_ro), SUM(aggregated_approved_ro), SUM(aggregated_rejected_ro) from " +
+                metricTable + " WHERE vs_id IN ('" + Joiner.on("','").join(vendorSites) + "')";
     }
 }

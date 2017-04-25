@@ -7,11 +7,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class PerformanceMetrics {
     private String month;
-    private Double fillRate;
-    private Double leadTime;
-    private Double qcReject;
-    private Double qcRejectWithoutExcess;
-    private Double roApprovalTat;
-    private Double roApprovedEager;
-    private Double roReject;
+    private String fillRate;
+    private String leadTime;
+    private String qcReject;
+    private String qcRejectWithoutExcess;
+    private String roApprovalTat;
+    private String roApprovedEager;
+    private String roReject;
+    private String roUnActioned;
 }

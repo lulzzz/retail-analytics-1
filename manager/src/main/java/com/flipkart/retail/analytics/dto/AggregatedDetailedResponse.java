@@ -8,5 +8,5 @@ import java.util.Map;
 
 @Data
 public class AggregatedDetailedResponse {
-    private List<Map<EntityType, List<AggregatedDetails>>> aggregatedDetails;
+    private List<Map<EntityType, AggregatedDetails>> aggregatedDetails;
 }

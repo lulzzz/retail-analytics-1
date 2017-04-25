@@ -9,7 +9,7 @@ import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.persistence.InvoiceManager;
 import com.flipkart.retail.analytics.persistence.entity.Invoice;
 import com.flipkart.retail.analytics.service.AggregationService;
-import com.flipkart.retail.analytics.utils.RetailAnalyticsUtils;
+import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -20,12 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class InvoiceService implements AggregationService {
     private final InvoiceManager invoiceManager;
-    private final RetailAnalyticsUtils retailAnalyticsUtils;
     private final ReportsConfiguration reportsConfiguration;
+    private final TableNameSelector tableNameSelector;
 
     @Override
     public List<PurchasingTrend> getAggregatedPurchasingTrend(List<String> vendorSites, List<String> warehouses) {
-        String tableName = retailAnalyticsUtils.getTableName(reportsConfiguration.getInvoice());
+        String tableName = tableNameSelector.getActiveTableName(reportsConfiguration.getInvoice());
         List<Invoice> invoices = invoiceManager.getInvoice(tableName, vendorSites, warehouses);
         List<PurchasingTrend> purchasingTrends = new ArrayList<>();
         for (Invoice invoice : invoices){
@@ -37,7 +37,7 @@ public class InvoiceService implements AggregationService {
     }
 
     @Override
-    public List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
+    public AggregatedDetails getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth) {
         return null;
     }
 }

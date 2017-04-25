@@ -1,18 +1,15 @@
 package com.flipkart.retail.analytics;
 
-import com.google.common.collect.Sets;
-import com.google.inject.Stage;
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.flipkart.retail.analytics.config.AnalyticsConfiguration;
 import com.flipkart.retail.analytics.config.AnalyticsModule;
+import com.flipkart.retail.analytics.dto.AggregatedPurchasingTrendResponse;
+import com.google.common.collect.Sets;
+import com.google.inject.Stage;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import com.palominolabs.metrics.guice.MetricsInstrumentationModule;
-
-import java.util.Properties;
-
 import fk.sp.common.extensions.dropwizard.elb.config.ElbHealthcheckModule;
 import fk.sp.common.extensions.dropwizard.jersey.JerseyClientModule;
 import fk.sp.common.extensions.dropwizard.jersey.LoggingFilter;
@@ -27,6 +24,13 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
+import javax.cache.Caching;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.AccessedExpiryPolicy;
+import javax.cache.expiry.Duration;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class AnalyticsManagementApplication extends Application<AnalyticsConfiguration> {
 
@@ -106,5 +110,9 @@ public class AnalyticsManagementApplication extends Application<AnalyticsConfigu
         environment.jersey().register(
             new LoggingFilter(java.util.logging.Logger.getLogger("OutboundRequestResponse"), true));
 
+        // Setting up cache
+        MutableConfiguration<String, AggregatedPurchasingTrendResponse> configuration1 = new MutableConfiguration<>();
+        configuration1.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(new Duration(TimeUnit.DAYS, 1)));
+        Caching.getCachingProvider().getCacheManager().createCache("purchasing_trend_cache", configuration1);
     }
 }

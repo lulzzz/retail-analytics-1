@@ -8,5 +8,5 @@ import java.util.List;
 public interface AggregationService {
     List<PurchasingTrend> getAggregatedPurchasingTrend(List<String> vendorSites, List<String> warehouses);
 
-    List<AggregatedDetails> getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth);
+    AggregatedDetails getDetailedResponse(List<String> vendorSites, String fromMonth, String toMonth);
 }

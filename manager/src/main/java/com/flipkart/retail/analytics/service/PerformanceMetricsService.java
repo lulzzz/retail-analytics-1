@@ -8,7 +8,7 @@ import com.flipkart.retail.analytics.dto.OperationalPerformanceResponse;
 import com.flipkart.retail.analytics.enums.MetricType;
 import com.flipkart.retail.analytics.persistence.PerformanceMetricsManager;
 import com.flipkart.retail.analytics.persistence.entity.PerformanceMetrics;
-import com.flipkart.retail.analytics.utils.RetailAnalyticsUtils;
+import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@javax.inject.Inject))
 public class PerformanceMetricsService {
     private final PerformanceMetricsManager performanceMetricsManager;
-    private final RetailAnalyticsUtils retailAnalyticsUtils;
     private final ReportsConfiguration reportsConfiguration;
+    private final TableNameSelector tableNameSelector;
 
     public OperationalPerformanceResponse getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest){
         OperationalPerformanceResponse operationalPerformanceResponse = new OperationalPerformanceResponse();
@@ -84,12 +84,18 @@ public class PerformanceMetricsService {
                             performanceMetrics.getRoReject()));
                 }
                 break;
+            case RO_WITHOUT_ACTION:
+                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
+                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                            performanceMetrics.getRoUnActioned()));
+                }
+                break;
         }
         return operationalPerformanceList;
     }
 
     private String getMetricsTable(){
-        return retailAnalyticsUtils.getTableName(reportsConfiguration.getMetrics());
+        return tableNameSelector.getActiveTableName(reportsConfiguration.getMetrics());
     }
 
 }

@@ -1,17 +1,29 @@
 package com.flipkart.retail.analytics.dto.aggregatedDetails;
 
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class POAggregatedDetails extends AggregatedDetails {
-    private String status;
-    private String currency;
-    private int uniqueProducts;
-    private Long totalReceivedUnits;
-    private Long totalPendingUnits;
-    private Long totalCancelledUnits;
-    private Double totalReceivedAmount;
-    private Double totalPendingAmount;
-    private Double totalCancelledAmount;
+    private Long openPo;
+    private List<PODetails> details;
+
+    @Data
+    public class PODetails{
+        private String status;
+        private String currency;
+        private int uniqueProducts;
+        private Long receivedUnits;
+        private Long pendingUnits;
+        private Long cancelledUnits;
+        private Double receivedAmount;
+        private Double pendingAmount;
+        private Double cancelledAmount;
+    }
 }
