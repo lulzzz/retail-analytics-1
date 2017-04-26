@@ -1,5 +1,6 @@
 package com.flipkart.retail.analytics.resources;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.flipkart.retail.analytics.dto.*;
 import com.flipkart.retail.analytics.service.BaseAggregationService;
@@ -30,10 +31,10 @@ public class AggregateResource {
     @POST
     @ApiOperation(value = "Aggregated purchasing trends")
     @Timed
+    @ExceptionMetered
     public Response getAggregatedPurchasingTrends(AggregatedPurchasingTrendRequest aggregatedPurchasingTrendRequest) {
         AggregatedPurchasingTrendResponse aggregatedPurchasingTrendResponse = baseAggregationService
-                .getAggregatedPurchasingTrends(aggregatedPurchasingTrendRequest.getEntities(),
-                        aggregatedPurchasingTrendRequest.getVendorSites(), aggregatedPurchasingTrendRequest.getWarehouses());
+                .getAggregatedPurchasingTrends(aggregatedPurchasingTrendRequest);
         return Response.ok(aggregatedPurchasingTrendResponse).build();
     }
 
@@ -41,6 +42,7 @@ public class AggregateResource {
     @POST
     @ApiOperation(value = "Aggregated operational performance")
     @Timed
+    @ExceptionMetered
     public Response getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest) {
         OperationalPerformanceResponse operationalPerformanceResponse = performanceMetricsService
                 .getAggregatedOperationalPerformance(operationalPerformanceRequest);
@@ -51,6 +53,7 @@ public class AggregateResource {
     @POST
     @ApiOperation(value = "Aggregated details")
     @Timed
+    @ExceptionMetered
     public Response getAggregatedPO(@Valid AggregatedDetailedRequest aggregatedDetailedRequest) {
         AggregatedDetailedResponse aggregatedDetailedResponse = baseAggregationService.getAggregatedDetails
                 (aggregatedDetailedRequest);

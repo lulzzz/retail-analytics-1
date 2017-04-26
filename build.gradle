@@ -82,8 +82,8 @@ task createWrapper(type: Wrapper) {
 apply plugin: 'dropwizard-debian'
 
 dropwizardDebian {
-    adminPort = 18003
-    jmxPort = 18004
+    adminPort = 19001
+    jmxPort = 19002
     applicationName = "fk-retail-analytics"
     parentProject = "manager"
     javaOpts = "-Xms1024m -Xmx1024m -XX:MaxPermSize=256m -XX:+UseG1GC -verbose:gc -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -Xloggc:/var/log/flipkart/retail/fk-retail-contract-management/gc.log"
@@ -121,7 +121,6 @@ project(':manager') {
 
     apply plugin: 'maven-publish'
     dependencies {
-//        compile project(':zulu-client')
     }
     publishing {
         publications {

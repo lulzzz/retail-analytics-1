@@ -1,15 +1,13 @@
 package com.flipkart.retail.analytics.resources;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
-import com.flipkart.retail.analytics.payments.dto.request.PaymentSearchRequest;
 import com.flipkart.retail.analytics.payments.dto.response.VendorSitePaymentsDetails;
 import com.flipkart.retail.analytics.payments.services.PaymentsService;
 import com.google.inject.Inject;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import lombok.Data;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -29,7 +27,8 @@ public class PaymentResource {
     @Path("/last-payment")
     @ApiOperation(value = "last-payment")
     @Timed
-    public Response getLastPaymentByVs(@NotNull @QueryParam("vendor_site_ids") String vendorSiteId) {
+    @ExceptionMetered
+    public Response getLastPaymentByVs(@NotNull @QueryParam("vendor_sites") String vendorSiteId) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
         VendorSitePaymentsDetails vendorSitePaymentsDetails = paymentsService.getLastPaymentByVs(vendorSiteIds);
         if (vendorSitePaymentsDetails == null) {
@@ -43,6 +42,7 @@ public class PaymentResource {
     @Path("/{payment_id}")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
+    @ExceptionMetered
     public Response getPaymentsFromId(@NotNull @PathParam("payment_id") String paymentId)
     {
         return Response.ok(paymentsService.getPaymentsDetails(paymentId)).build();

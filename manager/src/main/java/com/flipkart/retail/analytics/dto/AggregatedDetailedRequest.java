@@ -4,10 +4,11 @@ import com.flipkart.retail.analytics.enums.EntityType;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class AggregatedDetailedRequest {
+public class AggregatedDetailedRequest implements Serializable {
     private List<EntityType> entities;
     private List<String> vendorSites;
 

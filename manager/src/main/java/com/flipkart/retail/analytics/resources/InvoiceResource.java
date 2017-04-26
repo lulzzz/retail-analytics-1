@@ -1,5 +1,6 @@
 package com.flipkart.retail.analytics.resources;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.flipkart.retail.analytics.payments.services.InvoiceService;
 import com.google.inject.Inject;
@@ -28,6 +29,7 @@ public class InvoiceResource {
     @Path("/{invoice_id}/payment")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
+    @ExceptionMetered
     public Response getPaymentsIds(@NotEmpty @PathParam("invoice_id") String invoiceId)
     {
         return Response.ok(invoiceService.getPayments(invoiceId)).build();
@@ -44,6 +46,7 @@ public class InvoiceResource {
     @Path("/{invoice_id}/payment-details")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
+    @ExceptionMetered
     public Response getPaymentsDetails(@NotEmpty @PathParam("invoice_id") String invoiceId)
     {
         return Response.ok(invoiceService.getPaymentsDetails(invoiceId)).build();

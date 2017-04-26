@@ -11,6 +11,7 @@ import com.flipkart.retail.analytics.persistence.entity.PerformanceMetrics;
 import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
+import javax.cache.annotation.CacheResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,20 +23,19 @@ public class PerformanceMetricsService {
     private final ReportsConfiguration reportsConfiguration;
     private final TableNameSelector tableNameSelector;
 
+    @CacheResult(cacheName = "operational_performance_cache")
     public OperationalPerformanceResponse getAggregatedOperationalPerformance(OperationalPerformanceRequest operationalPerformanceRequest){
         OperationalPerformanceResponse operationalPerformanceResponse = new OperationalPerformanceResponse();
-        List<Map<MetricType, List<OperationalPerformance>>> operationalPerformanceList = new ArrayList<>();
+        Map<MetricType, List<OperationalPerformance>> operationalPerformance = new HashMap<>();
         List<PerformanceMetrics> performanceMetricsList = performanceMetricsManager.getPerformanceMetrics(getMetricsTable
                 (), operationalPerformanceRequest.getVendorSites(), operationalPerformanceRequest.getWarehouses());
         for (MetricType metricType : operationalPerformanceRequest.getMetrics()) {
-            List<OperationalPerformance> operationalPerformances = getPerformanceMetrics(metricType,
+            List<OperationalPerformance> metricOperationalPerformances = getPerformanceMetrics(metricType,
                     performanceMetricsList);
-            operationalPerformanceList.add(new HashMap<MetricType, List<OperationalPerformance>>(){{
-                put(metricType, operationalPerformances);
-            }});
+            operationalPerformance.put(metricType, metricOperationalPerformances);
 
         }
-        operationalPerformanceResponse.setOperationalPerformance(operationalPerformanceList);
+        operationalPerformanceResponse.setOperationalPerformance(operationalPerformance);
         return operationalPerformanceResponse;
     }
 

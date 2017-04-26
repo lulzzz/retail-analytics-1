@@ -1,6 +1,7 @@
 package com.flipkart.retail.analytics.resources;
 
 
+import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.flipkart.retail.analytics.common.YearClassifier;
 import com.flipkart.retail.analytics.payments.services.PaymentAggregatorService;
@@ -33,7 +34,8 @@ public class AggregatedPaymentResource {
     @Path("/last-year")
     @ApiOperation(value = "Payment aggregated data for vendor")
     @Timed
-    public Response getVendorSitePaymentDetails(@NotNull @QueryParam("vendor_site_ids") String vendorSiteId,
+    @ExceptionMetered
+    public Response getVendorSitePaymentDetails(@NotNull @QueryParam("vendor_sites") String vendorSiteId,
                                                 @NotNull @QueryParam("year") YearClassifier year) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
         return Response.ok(paymentAggregatorService.getLastYearPaymentDetails(vendorSiteIds, year)).build();

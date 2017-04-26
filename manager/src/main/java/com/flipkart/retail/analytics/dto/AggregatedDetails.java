@@ -1,4 +1,6 @@
 package com.flipkart.retail.analytics.dto;
 
-public abstract class AggregatedDetails {
+import java.io.Serializable;
+
+public abstract class AggregatedDetails implements Serializable {
 }
