@@ -1,0 +1,4 @@
+# one.job
+type=command
+command=sh payment.sh
+failure.emails=kushagra.gupta@flipkart.com
