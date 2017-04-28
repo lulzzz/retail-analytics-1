@@ -5,8 +5,8 @@ import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.repository.EntityRepository;
 import lombok.RequiredArgsConstructor;
 
+import javax.cache.annotation.CacheResult;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,33 +15,32 @@ import java.util.Map;
 public class BaseAggregationService {
     private final EntityRepository entityRepository;
 
-    public AggregatedPurchasingTrendResponse getAggregatedPurchasingTrends(List<EntityType> entityTypes, List<String> vendorSites, List<String> warehouses){
+    @CacheResult(cacheName = "purchasing_trend_cache")
+    public AggregatedPurchasingTrendResponse getAggregatedPurchasingTrends(AggregatedPurchasingTrendRequest aggregatedPurchasingTrendRequest){
         AggregatedPurchasingTrendResponse aggregatedPurchasingTrendResponse = new AggregatedPurchasingTrendResponse();
-        List<Map<EntityType, List<PurchasingTrend>>> purchasingTrendsList = new ArrayList<>();
-        for (EntityType entityType : entityTypes){
+        Map<EntityType, List<PurchasingTrend>> purchasingTrend = new HashMap<>();
+        for (EntityType entityType : aggregatedPurchasingTrendRequest.getEntities()){
             AggregationService aggregationService = getEntityHandler(entityType);
-            List<PurchasingTrend> purchasingTrends = aggregationService.getAggregatedPurchasingTrend(vendorSites, warehouses);
-            purchasingTrendsList.add(new HashMap<EntityType, List<PurchasingTrend>>(){{
-                put(entityType, purchasingTrends);
-            }});
+            List<PurchasingTrend> purchasingTrends = aggregationService.getAggregatedPurchasingTrend
+                    (aggregatedPurchasingTrendRequest.getVendorSites(), aggregatedPurchasingTrendRequest.getWarehouses());
+            purchasingTrend.put(entityType, purchasingTrends);
         }
-        aggregatedPurchasingTrendResponse.setPurchasingTrends(purchasingTrendsList);
+        aggregatedPurchasingTrendResponse.setPurchasingTrends(purchasingTrend);
         return aggregatedPurchasingTrendResponse;
     }
 
+    @CacheResult(cacheName = "aggregated_details_cache")
     public AggregatedDetailedResponse getAggregatedDetails(AggregatedDetailedRequest aggregatedDetailedRequest){
         AggregatedDetailedResponse aggregatedDetailedResponse = new AggregatedDetailedResponse();
-        List<Map<EntityType, AggregatedDetails>> aggregatedDetailsList = new ArrayList<>();
+        Map<EntityType, AggregatedDetails> aggregatedDetails = new HashMap<>();
         for(EntityType entityType : aggregatedDetailedRequest.getEntities()){
             AggregationService aggregationService = getEntityHandler(entityType);
-            AggregatedDetails aggregatedDetails = aggregationService.getDetailedResponse
+            AggregatedDetails aggregatedEntityDetails = aggregationService.getDetailedResponse
                     (aggregatedDetailedRequest.getVendorSites(), aggregatedDetailedRequest.getFromMonth(),
                             aggregatedDetailedRequest.getToMonth());
-            aggregatedDetailsList.add(new HashMap<EntityType, AggregatedDetails>(){{
-                put(entityType, aggregatedDetails);
-            }});
+            aggregatedDetails.put(entityType, aggregatedEntityDetails);
         }
-        aggregatedDetailedResponse.setAggregatedDetails(aggregatedDetailsList);
+        aggregatedDetailedResponse.setAggregatedDetails(aggregatedDetails);
         return aggregatedDetailedResponse;
     }
 

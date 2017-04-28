@@ -5,16 +5,13 @@ import com.flipkart.retail.analytics.config.ReportsConfiguration;
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
 import com.flipkart.retail.analytics.dto.aggregatedDetails.POAggregatedDetails;
-import com.flipkart.retail.analytics.dto.purchasingTrend.POPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.persistence.PurchaseOrderManager;
-import com.flipkart.retail.analytics.persistence.entity.PurchaseOrder;
 import com.flipkart.retail.analytics.service.AggregationService;
 import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @EntityHandler(entityType = EntityType.PURCHASE_ORDER)
@@ -26,14 +23,7 @@ public class PurchaseOrderService implements AggregationService {
 
     @Override
     public List<PurchasingTrend> getAggregatedPurchasingTrend(List<String> vendorSites, List<String> warehouses) {
-        List<PurchaseOrder> purchaseOrders = purchaseOrderManager.getPurchaseOrders(getPoTable(), vendorSites, warehouses);
-        List<PurchasingTrend> purchasingTrends = new ArrayList<>();
-        for (PurchaseOrder purchaseOrder : purchaseOrders){
-            POPurchasingTrend poPurchasingTrend = new POPurchasingTrend(purchaseOrder.getMonth(), purchaseOrder
-                    .getCurrency(), purchaseOrder.getQuantity(), purchaseOrder.getAmount());
-            purchasingTrends.add(poPurchasingTrend);
-        }
-        return purchasingTrends;
+        return purchaseOrderManager.getPurchaseOrders(getPoTable(), vendorSites, warehouses);
     }
 
     @Override

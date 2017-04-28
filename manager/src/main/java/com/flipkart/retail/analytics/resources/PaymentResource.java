@@ -1,5 +1,6 @@
 package com.flipkart.retail.analytics.resources;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.flipkart.retail.analytics.exception.AuthServiceException;
 import com.flipkart.retail.analytics.payments.dto.response.VendorSitePaymentsDetails;
@@ -29,7 +30,8 @@ public class PaymentResource {
     @Path("/last-payment")
     @ApiOperation(value = "last-payment")
     @Timed
-    public Response getLastPaymentByVs(@NotNull @QueryParam("vendor_site_ids") String vendorSiteId) {
+    @ExceptionMetered
+    public Response getLastPaymentByVs(@NotNull @QueryParam("vendor_sites") String vendorSiteId) {
         List<String> vendorSiteIds = Arrays.asList(vendorSiteId.split(","));
         VendorSitePaymentsDetails vendorSitePaymentsDetails = paymentsService.getLastPaymentByVs(vendorSiteIds);
         if (vendorSitePaymentsDetails == null) {
@@ -43,6 +45,7 @@ public class PaymentResource {
     @Path("/{payment_id}")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
+    @ExceptionMetered
     public Response getPaymentsFromId(@NotNull @PathParam("payment_id") String paymentId){
         try {
             return Response.ok(paymentsService.getPaymentsDetails(paymentId)).build();
@@ -55,6 +58,7 @@ public class PaymentResource {
     @Path("/search")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
+    @ExceptionMetered
     public Response getPaymentDetailsFromVendorSites(@Valid PaymentSearchRequest paymentSearchRequest)
     {
         return Response.ok(paymentsService.getPaymentFromVendorSites(paymentSearchRequest)).build();

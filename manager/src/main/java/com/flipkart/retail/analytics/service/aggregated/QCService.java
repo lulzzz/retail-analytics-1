@@ -4,16 +4,13 @@ import com.flipkart.retail.analytics.annotations.EntityHandler;
 import com.flipkart.retail.analytics.config.ReportsConfiguration;
 import com.flipkart.retail.analytics.dto.AggregatedDetails;
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
-import com.flipkart.retail.analytics.dto.purchasingTrend.QCPurchasingTrend;
 import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.persistence.QCManager;
-import com.flipkart.retail.analytics.persistence.entity.QC;
 import com.flipkart.retail.analytics.service.AggregationService;
 import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @EntityHandler(entityType = EntityType.QUALITY_CHECK)
@@ -26,14 +23,7 @@ public class QCService implements AggregationService {
     @Override
     public List<PurchasingTrend> getAggregatedPurchasingTrend(List<String> vendorSites, List<String> warehouses) {
         String tableName = tableNameSelector.getActiveTableName(reportsConfiguration.getQc());
-        List<QC> qcs = qcManager.getQC(tableName, vendorSites, warehouses);
-        List<PurchasingTrend> purchasingTrends = new ArrayList<>();
-        for (QC qc : qcs){
-            QCPurchasingTrend qcPurchasingTrend = new QCPurchasingTrend(qc.getMonth(), qc.getCurrency(), qc
-                    .getRejectQty(), qc.getRejectAmount(), qc.getExcessQty(), qc.getExcessAmount());
-            purchasingTrends.add(qcPurchasingTrend);
-        }
-        return purchasingTrends;
+        return qcManager.getQC(tableName, vendorSites, warehouses);
     }
 
     @Override

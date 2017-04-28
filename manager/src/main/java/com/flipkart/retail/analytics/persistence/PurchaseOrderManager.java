@@ -1,7 +1,8 @@
 package com.flipkart.retail.analytics.persistence;
 
+import com.flipkart.retail.analytics.dto.PurchasingTrend;
 import com.flipkart.retail.analytics.dto.aggregatedDetails.POAggregatedDetails;
-import com.flipkart.retail.analytics.persistence.entity.PurchaseOrder;
+import com.flipkart.retail.analytics.dto.purchasingTrend.POPurchasingTrend;
 import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -18,15 +19,15 @@ import java.util.List;
 public class PurchaseOrderManager {
     private final JdbcTemplate jdbcTemplate;
 
-    public List<PurchaseOrder> getPurchaseOrders(String tableName, List<String> vendorSites, List<String> warehouses) {
+    public List<PurchasingTrend> getPurchaseOrders(String tableName, List<String> vendorSites, List<String> warehouses) {
         String poQuery = getPoQuery(tableName, vendorSites, warehouses);
-        return jdbcTemplate.query(poQuery, new ResultSetExtractor<List<PurchaseOrder>>() {
+        return jdbcTemplate.query(poQuery, new ResultSetExtractor<List<PurchasingTrend>>() {
             @Override
-            public List<PurchaseOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+            public List<PurchasingTrend> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchasingTrend> purchaseOrderList = new ArrayList<>();
                 while (rs.next()) {
-                    PurchaseOrder purchaseOrder = new PurchaseOrder(rs.getString(1), rs
-                            .getString(2), rs.getInt(3), rs.getDouble(4));
+                    POPurchasingTrend purchaseOrder = new POPurchasingTrend(rs.getString(1), rs.getString(2), rs
+                            .getLong(3), rs.getLong(4), rs.getDouble(5), rs.getDouble(6));
                     purchaseOrderList.add(purchaseOrder);
                 }
                 return purchaseOrderList;
@@ -73,9 +74,9 @@ public class PurchaseOrderManager {
     }
 
     private String getPoQuery(String poTable, List<String> vendorSites, List<String> warehouses){
-        return "SELECT month, currency, SUM(received_quantity), SUM(received_amount) from " + poTable + " WHERE vs_id IN ('" +
-                Joiner.on("','").join(vendorSites)
-                + "') AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
+        return "SELECT month, currency, SUM(received_quantity), SUM(total_quantity), SUM(received_amount), SUM" +
+                "(total_amount) from  " + poTable + " WHERE vs_id IN ('" + Joiner.on("','").join(vendorSites) + "') " +
+                "AND fk_warehouse IN ('"+ Joiner.on("','").join(warehouses) + "')  GROUP BY month, currency";
     }
 
     private String getPoDetailsQuery(String poTable, List<String> vendorSites, String fromMonth,

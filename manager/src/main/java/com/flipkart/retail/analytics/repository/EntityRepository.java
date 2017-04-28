@@ -4,17 +4,20 @@ import com.flipkart.retail.analytics.enums.EntityType;
 import com.flipkart.retail.analytics.service.AggregationService;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-public class EntityRepository extends HashMap<EntityType, AggregationService>{
+public class EntityRepository {
+
+    private final Map<EntityType, AggregationService> handlers = new HashMap<>();
 
     public void addHandler(EntityType entityType, AggregationService aggregationService){
         if(Objects.nonNull(entityType) && Objects.nonNull(aggregationService)){
-            this.put(entityType, aggregationService);
+            handlers.put(entityType, aggregationService);
         }
     }
 
     public AggregationService getHandler(EntityType entityType){
-        return this.get(entityType);
+        return handlers.get(entityType);
     }
 }

@@ -24,6 +24,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.jsr107.ri.annotations.guice.module.CacheAnnotationsModule;
 
 import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
@@ -53,6 +54,7 @@ public class AnalyticsManagementApplication extends Application<AnalyticsConfigu
                 .addModule(new JerseyClientModule())
                 .addModule(new ReportsModule())
                 .addModule(new ElbHealthcheckModule())
+                .addModule(new CacheAnnotationsModule())
                 .addModule(new MetricsInstrumentationModule(bootstrap.getMetricRegistry()))
                 .addModule(new JpaWithSpringModule(
                         Sets.newHashSet(
@@ -110,9 +112,18 @@ public class AnalyticsManagementApplication extends Application<AnalyticsConfigu
         environment.jersey().register(
             new LoggingFilter(java.util.logging.Logger.getLogger("OutboundRequestResponse"), true));
 
+
         // Setting up cache
         MutableConfiguration<String, AggregatedPurchasingTrendResponse> configuration1 = new MutableConfiguration<>();
-        configuration1.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(new Duration(TimeUnit.DAYS, 1)));
+        configuration1.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(new Duration(TimeUnit.HOURS, 12)));
         Caching.getCachingProvider().getCacheManager().createCache("purchasing_trend_cache", configuration1);
+
+        MutableConfiguration<String, AggregatedPurchasingTrendResponse> configuration2 = new MutableConfiguration<>();
+        configuration2.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(new Duration(TimeUnit.HOURS, 12)));
+        Caching.getCachingProvider().getCacheManager().createCache("operational_performance_cache", configuration2);
+
+        MutableConfiguration<String, AggregatedPurchasingTrendResponse> configuration3 = new MutableConfiguration<>();
+        configuration3.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(new Duration(TimeUnit.HOURS, 12)));
+        Caching.getCachingProvider().getCacheManager().createCache("aggregated_details_cache", configuration3);
     }
 }

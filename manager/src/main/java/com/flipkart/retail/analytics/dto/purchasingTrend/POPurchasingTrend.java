@@ -1,18 +1,16 @@
 package com.flipkart.retail.analytics.dto.purchasingTrend;
 
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class POPurchasingTrend extends PurchasingTrend {
+    private String month;
     private String currency;
-    private int units;
-    private double amount;
-
-    public POPurchasingTrend(String month, String currency, int units, double amount){
-        super(month);
-        this.units = units;
-        this.currency = currency;
-        this.amount = amount;
-    }
+    private Long deliveredUnits;
+    private Long totalUnits;
+    private Double deliveredAmount;
+    private Double totalAmount;
 }

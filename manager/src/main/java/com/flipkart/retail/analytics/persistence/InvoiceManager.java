@@ -1,6 +1,7 @@
 package com.flipkart.retail.analytics.persistence;
 
-import com.flipkart.retail.analytics.persistence.entity.Invoice;
+import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import com.flipkart.retail.analytics.dto.purchasingTrend.InvoicePurchasingTrend;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,15 @@ import java.util.List;
 public class InvoiceManager {
     private final JdbcTemplate jdbcTemplate;
 
-    public List<Invoice> getInvoice(String tableName, List<String> vendorSites, List<String> warehouses) {
+    public List<PurchasingTrend> getInvoice(String tableName, List<String> vendorSites, List<String> warehouses) {
         String invoiceQuery = getInvoiceQuery(tableName, vendorSites, warehouses);
-        return jdbcTemplate.query(invoiceQuery, new ResultSetExtractor<List<Invoice>>() {
+        return jdbcTemplate.query(invoiceQuery, new ResultSetExtractor<List<PurchasingTrend>>() {
             @Override
-            public List<Invoice> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<Invoice> invoiceList = new ArrayList<>();
+            public List<PurchasingTrend> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchasingTrend> invoiceList = new ArrayList<>();
                 while (rs.next()) {
-                    Invoice invoice = new Invoice(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getDouble(4));
+                    InvoicePurchasingTrend invoice = new InvoicePurchasingTrend(rs.getString(1), rs.getString(2), rs
+                            .getLong(3), rs.getDouble(4));
                     invoiceList.add(invoice);
                 }
                 return invoiceList;

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -17,7 +18,7 @@ public class ROAggregatedDetails extends AggregatedDetails {
     private List<RODetails> details;
 
     @Data
-    public class RODetails{
+    public class RODetails implements Serializable{
         private String status;
         private String currency;
         private int uniqueProducts;
