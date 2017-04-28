@@ -1,23 +1,16 @@
 package com.flipkart.retail.analytics.dto.purchasingTrend;
 
 import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class QCPurchasingTrend extends PurchasingTrend {
+    private String month;
     private String currency;
-    private int rejectedUnits;
-    private double rejectedAmount;
-    private int excessUnits;
-    private double excessAmount;
-
-    public QCPurchasingTrend(String month, String currency, int rejectedUnits, double rejectedAmount, int excessUnits,
-                             double excessAmount){
-        super(month);
-        this.currency = currency;
-        this.rejectedUnits = rejectedUnits;
-        this.rejectedAmount = rejectedAmount;
-        this.excessAmount = excessUnits;
-        this.excessAmount = excessAmount;
-    }
+    private Long rejectedUnits;
+    private Double rejectedAmount;
+    private Long excessUnits;
+    private Double excessAmount;
 }

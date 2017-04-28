@@ -1,6 +1,7 @@
 package com.flipkart.retail.analytics.persistence;
 
-import com.flipkart.retail.analytics.persistence.entity.IRN;
+import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import com.flipkart.retail.analytics.dto.purchasingTrend.IRNPurchasingTrend;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,15 @@ import java.util.List;
 public class IRNManager {
     private final JdbcTemplate jdbcTemplate;
 
-    public List<IRN> getIRNs(String tableName, List<String> vendorSites, List<String> warehouses) {
+    public List<PurchasingTrend> getIRNs(String tableName, List<String> vendorSites, List<String> warehouses) {
         String irnQuery = getIrnQuery(tableName, vendorSites, warehouses);
-        return jdbcTemplate.query(irnQuery, new ResultSetExtractor<List<IRN>>() {
+        return jdbcTemplate.query(irnQuery, new ResultSetExtractor<List<PurchasingTrend>>() {
             @Override
-            public List<IRN> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<IRN> irnList = new ArrayList<>();
+            public List<PurchasingTrend> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchasingTrend> irnList = new ArrayList<>();
                 while (rs.next()) {
-                    IRN purchaseOrder = new IRN(rs.getString(1), rs.getInt(2), rs.getDouble(3));
+                    IRNPurchasingTrend purchaseOrder = new IRNPurchasingTrend(rs.getString(1), rs.getLong(2), rs
+                            .getDouble(3));
                     irnList.add(purchaseOrder);
                 }
                 return irnList;

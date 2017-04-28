@@ -12,10 +12,7 @@ import fk.sp.sa.reports.tableselector.TableNameSelector;
 import lombok.RequiredArgsConstructor;
 
 import javax.cache.annotation.CacheResult;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor(onConstructor = @__(@javax.inject.Inject))
 public class PerformanceMetricsService {
@@ -43,52 +40,68 @@ public class PerformanceMetricsService {
         List<OperationalPerformance> operationalPerformanceList = new ArrayList<>();
         switch (metricType){
             case FILL_RATE:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getFillRate()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getFillRate())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getFillRate()));
+                    }
+                });
                 break;
             case LEAD_TIME:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getLeadTime()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getLeadTime())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getLeadTime()));
+                    }
+                });
                 break;
             case QC_REJECT_WITHOUT_EXCESS:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getQcRejectWithoutExcess()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getQcRejectWithoutExcess())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getQcRejectWithoutExcess()));
+                    }
+                });
                 break;
             case QC_REJECT:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getQcReject()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getQcReject())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getQcReject()));
+                    }
+                });
                 break;
             case RO_APPROVAL_TAT:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getRoApprovalTat()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getRoApprovalTat())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getRoApprovalTat()));
+                    }
+                });
                 break;
             case RO_APPROVED_EAGER:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getRoApprovedEager()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getRoApprovedEager())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getRoApprovedEager()));
+                    }
+                });
                 break;
             case RO_REJECTED:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getRoReject()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getRoReject())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getRoReject()));
+                    }
+                });
                 break;
             case RO_WITHOUT_ACTION:
-                for(PerformanceMetrics performanceMetrics : performanceMetricsList){
-                    operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
-                            performanceMetrics.getRoUnActioned()));
-                }
+                performanceMetricsList.stream().forEach(performanceMetrics -> {
+                    if (Objects.nonNull(performanceMetrics.getRoUnActioned())) {
+                        operationalPerformanceList.add(new OperationalPerformance(performanceMetrics.getMonth(),
+                                performanceMetrics.getRoUnActioned()));
+                    }
+                });
                 break;
         }
         return operationalPerformanceList;

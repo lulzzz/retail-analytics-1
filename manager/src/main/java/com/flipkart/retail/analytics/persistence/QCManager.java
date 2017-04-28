@@ -1,6 +1,7 @@
 package com.flipkart.retail.analytics.persistence;
 
-import com.flipkart.retail.analytics.persistence.entity.QC;
+import com.flipkart.retail.analytics.dto.PurchasingTrend;
+import com.flipkart.retail.analytics.dto.purchasingTrend.QCPurchasingTrend;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +18,18 @@ import java.util.List;
 public class QCManager {
     private final JdbcTemplate jdbcTemplate;
 
-    public List<QC> getQC(String tableName, List<String> vendorSites, List<String> warehouses) {
+    public List<PurchasingTrend> getQC(String tableName, List<String> vendorSites, List<String> warehouses) {
         String qcQuery = getQCQuery(tableName, vendorSites, warehouses);
-        return jdbcTemplate.query(qcQuery, new ResultSetExtractor<List<QC>>() {
+        return jdbcTemplate.query(qcQuery, new ResultSetExtractor<List<PurchasingTrend>>() {
             @Override
-            public List<QC> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<QC> qcList = new ArrayList<>();
+            public List<PurchasingTrend> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchasingTrend> qcPurchasingrendList = new ArrayList<>();
                 while (rs.next()) {
-                    QC qc = new QC(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4), rs.getDouble(5), rs
-                            .getString(6));
-                    qcList.add(qc);
+                    QCPurchasingTrend qcPurchasingTrend = new QCPurchasingTrend(rs.getString(1), rs.getString(2), rs.getLong(2), rs
+                            .getDouble(3), rs.getLong(4), rs.getDouble(5));
+                    qcPurchasingrendList.add(qcPurchasingTrend);
                 }
-                return qcList;
+                return qcPurchasingrendList;
             }
         });
     }

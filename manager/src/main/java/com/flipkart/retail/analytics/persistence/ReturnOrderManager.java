@@ -1,8 +1,9 @@
 package com.flipkart.retail.analytics.persistence;
 
+import com.flipkart.retail.analytics.dto.PurchasingTrend;
 import com.flipkart.retail.analytics.dto.aggregatedDetails.ROAggregatedDetails;
+import com.flipkart.retail.analytics.dto.purchasingTrend.ROPurchasingTrend;
 import com.flipkart.retail.analytics.persistence.entity.ROAggregatedCount;
-import com.flipkart.retail.analytics.persistence.entity.ReturnOrder;
 import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -19,14 +20,14 @@ import java.util.List;
 public class ReturnOrderManager {
     private final JdbcTemplate jdbcTemplate;
 
-    public List<ReturnOrder> getReturnOrders(String tableName, List<String> vendorSites, List<String> warehouses) {
+    public List<PurchasingTrend> getReturnOrders(String tableName, List<String> vendorSites, List<String> warehouses) {
         String roQuery = getROQuery(tableName, vendorSites, warehouses);
-        return jdbcTemplate.query(roQuery, new ResultSetExtractor<List<ReturnOrder>>() {
+        return jdbcTemplate.query(roQuery, new ResultSetExtractor<List<PurchasingTrend>>() {
             @Override
-            public List<ReturnOrder> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                List<ReturnOrder> returnOrderList = new ArrayList<>();
+            public List<PurchasingTrend> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List<PurchasingTrend> returnOrderList = new ArrayList<>();
                 while (rs.next()) {
-                    ReturnOrder returnOrder = new ReturnOrder(rs.getString(1), rs.getString(2), rs.getInt(3), rs
+                    ROPurchasingTrend returnOrder = new ROPurchasingTrend(rs.getString(1), rs.getString(2), rs.getInt(3), rs
                             .getDouble(4));
                     returnOrderList.add(returnOrder);
                 }
