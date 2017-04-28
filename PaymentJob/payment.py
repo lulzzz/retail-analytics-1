@@ -10,7 +10,7 @@ c = conn.cursor()
 
 
 def getPaymentByPaymentId(paymentId):
-    query = """SELECT id FROM payments WHERE ref_number = %s """%(paymentId)
+    query = """SELECT id ,status FROM payments WHERE ref_number = %s """%(paymentId)
     c.execute(query)
     results = c.fetchall()
     if(len(results)==0):
@@ -57,6 +57,7 @@ def insertIntoPaymentItems(paymentId,paymentItem):
 def insertIntoPayments(paymentItem):
     paidDate = str(paymentItem["paymentDate"])
     paidDate = datetime.strptime(paidDate,'%d-%b-%y')
+    #print paymentItem["status"],paymentItem["paymentId"], "---------into insertion"
     queryforPayment = """INSERT INTO payments (paid_date,ref_number,amount,payment_method,payment_number,vendor_bank_name,vendor_site_id,vendor_bank_account_number,currency, status, vendor_branch_name, vendor_name, created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW())"""
     c.execute(queryforPayment,(paidDate,paymentItem["paymentId"],paymentItem["paymentAmount"],paymentItem["paymentMethod"],paymentItem["paymentNumber"],paymentItem["vendorBankName"],paymentItem["vendorSiteId"],paymentItem["vendorBankAccountNumber"],paymentItem["currency"],paymentItem["status"],paymentItem["vendorBankBranchName"],paymentItem["vendorName"]))
 
@@ -64,6 +65,7 @@ def insertIntoPayments(paymentItem):
 def updatePayment(paymentItem,idForPayment):
     paidDate = str(paymentItem["paymentDate"])
     paidDate = datetime.strptime(paidDate,'%d-%b-%y')
+    #print paymentItem["status"],paymentItem["paymentId"],"-----------into updation"
     query ="""UPDATE payments set paid_date = %s , ref_number = %s , amount = %s, payment_method = %s, payment_number = %s , vendor_bank_name = %s , vendor_site_id = %s, vendor_bank_account_number = %s, currency = %s, status = %s, vendor_branch_name = %s, vendor_name = %s, updated_at = NOW() WHERE id = %s """
     c.execute(query,(paidDate,paymentItem["paymentId"],paymentItem["paymentAmount"],paymentItem["paymentMethod"],paymentItem["paymentNumber"],paymentItem["vendorBankName"],paymentItem["vendorSiteId"],paymentItem["vendorBankAccountNumber"],paymentItem["currency"],paymentItem["status"],paymentItem["vendorBankBranchName"],paymentItem["vendorName"],idForPayment))
 
@@ -84,27 +86,37 @@ def insertIntoJobLogs(startDate,endDate ,processed):
     query = """INSERT INTO job_logs (job_id, start_date_param, end_date_param, processed, created_at)VALUES("fetch_payments", %s , %s , %s, NOW())"""
     c.execute(query, (startDate,endDate , processed))
 
+
 def insertToPayments(paymentItem):
-    paymentId = getPaymentByPaymentId(paymentItem["paymentId"])
-    if(len(paymentId)==0):
+    payment = getPaymentByPaymentId(paymentItem["paymentId"])
+    status = paymentItem["status"]
+    if(len(payment)==0):
         try:
             insertIntoPayments(paymentItem)
+            payment = getPaymentByPaymentId(paymentItem["paymentId"])
+            if status =="ISSUED":
+                isAmountIngested = aggregatePayments(paymentItem,True)
+                if(not(isAmountIngested)):
+                    return False
         except Exception as e:
             print("exception in creation into payment")
             print e.message, e.args
             print("------------------------------------------------------------------------------------------------")
             return False
-        paymentId = getPaymentByPaymentId(paymentItem["paymentId"])
     else:
         try:
-            updatePayment(paymentItem,paymentId[0])
+            updatePayment(paymentItem,payment[0])
+            if status =="VOID" and payment[1] == "ISSUED":
+                aggregatePayments(paymentItem,False)
+                if(not(isAmountIngested)):
+                    return False
         except Exception as e:
             print("exception in updation into payments")
             print e.message, e.args
             print("----------------------------------------------------------------------------------------------")
             return False
     try:
-        insertIntoPaymentItems(paymentId[0],paymentItem)
+        insertIntoPaymentItems(payment[0],paymentItem)
     except Exception as e:
         print("exception in creation into payment items")
         print e.message, e.args
@@ -121,22 +133,25 @@ def getIdByVendorSiteCurrencyAndMonth(vendorSite,currency,month):
         return results
     return results[0]
 
-
-
-def aggregatePayments(paymentItem):
-    paidDate = str(paymentItem["paymentDate"])
+def getYearAndMonth(date):
+    paidDate = str(date)
     paidDate = datetime.strptime(paidDate,'%d-%b-%y')
     paidDate = paidDate.strftime('%Y-%m-%d')
     paidDate = paidDate.split("-")
     paymentDate = paidDate[0]+"-"+paidDate[1]
+    return paymentDate
 
+def aggregatePayments(paymentItem,isStatusIssued):
+    paymentDate = getYearAndMonth(paymentItem["paymentDate"])
     vendorSiteId = paymentItem["vendorSiteId"]
     currency = paymentItem["currency"]
-    itemNetAmount = float(paymentItem["paymentInvoiceAmount"])
+    paymentAmount = float(paymentItem["paymentAmount"])
+    if not(isStatusIssued):
+        paymentAmount = -paymentAmount
     vendorSiteCurrencyAndMonth = getIdByVendorSiteCurrencyAndMonth(vendorSiteId,currency,paymentDate)
     if (len(vendorSiteCurrencyAndMonth) == 0):
         try:
-            insertIntoAggregatedPayments(vendorSiteId,currency,paymentDate,itemNetAmount)
+            insertIntoAggregatedPayments(vendorSiteId,currency,paymentDate,paymentAmount)
         except Exception as e:
             print("exception in creation into aggregated payments")
             print e.message, e.args
@@ -146,17 +161,13 @@ def aggregatePayments(paymentItem):
         try:
             aggregatedPaymentsId = vendorSiteCurrencyAndMonth[0]
             amount = float(vendorSiteCurrencyAndMonth[1])
-            amount = amount + itemNetAmount
+            amount = amount + paymentAmount
             updateAggregatedPipeline(aggregatedPaymentsId,amount)
         except Exception as e:
             print("exception in updation into aggregated payments")
             print e.message, e.args
             return False
     return True
-
-
-
-
 
 def getPaymentItems(paymentItems):
     for paymentItem in paymentItems:
@@ -165,8 +176,7 @@ def getPaymentItems(paymentItems):
                 continue
             paymentItemHash = hash(paymentItem)
             isPaymentsInserted = insertToPayments(paymentItemHash)
-            isAmountInserted = aggregatePayments(paymentItemHash)
-            if(not(isAmountInserted and isPaymentsInserted)):
+            if(not(isPaymentsInserted)):
                 return False
         except Exception as e:
             print ("error in insertion")
@@ -177,7 +187,7 @@ def getPaymentItems(paymentItems):
 
 
 def getFlatPayment(startDate,endDate):
-    uri = "http://10.85.185.171:27660/ofiFeedback/PaymentService/getFlatPaymentItemsForDateRange?fromDate=2017-01-17&toDate=2017-01-19"
+    uri = "http://10.85.185.171:27660/ofiFeedback/PaymentService/getFlatPaymentItemsForDateRange?fromDate=2015-03-01&toDate=2015-05-01"
     try:
         response = requests.get(uri)
         if(response.status_code == 200):

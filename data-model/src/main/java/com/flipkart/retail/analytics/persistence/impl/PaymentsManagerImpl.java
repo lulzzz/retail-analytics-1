@@ -1,11 +1,13 @@
 package com.flipkart.retail.analytics.persistence.impl;
 
 import com.flipkart.retail.analytics.persistence.PaymentsManager;
+import com.flipkart.retail.analytics.persistence.dto.request.PaymentSearchRequest;
 import com.flipkart.retail.analytics.persistence.entity.Payment;
 import com.google.inject.Inject;
 import fk.sp.common.extensions.jpa.Page;
 import fk.sp.common.extensions.jpa.PageRequest;
 import fk.sp.common.extensions.jpa.SimpleJpaGenericRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+@Slf4j
 public class PaymentsManagerImpl extends SimpleJpaGenericRepository<Payment, Long> implements PaymentsManager {
 
     @Inject
@@ -34,20 +37,20 @@ public class PaymentsManagerImpl extends SimpleJpaGenericRepository<Payment, Lon
     @Override
     public  Optional<Payment>getPayments(String paymentId)
     {
-        //log.debug("Fetching payments details {}",paymentId);
+        log.debug("Fetching payments details {}",paymentId);
         Map<String, Object> params = new HashMap<>();
         params.put("refNumber", paymentId);
         Optional<Payment>
-                payments=
+                payment=
                 findOneByNamedQuery("Payment.findByRefNumber", params);
 
-        return payments;
+        return payment;
     }
 
-  /*  @Override
+    @Override
     public List<Payment> getPaymentByVendorSites(PaymentSearchRequest paymentSearchRequest)
     {
-        //log.debug("Fetching payment details for PaymentSearchRequest {}",paymentSearchRequest);
+        log.debug("Fetching payment details for PaymentSearchRequest {}",paymentSearchRequest);
         PageRequest
                 pageRequest =
                 PageRequest.builder().pageNumber(paymentSearchRequest.getPageNumber()-1).
@@ -55,14 +58,11 @@ public class PaymentsManagerImpl extends SimpleJpaGenericRepository<Payment, Lon
         LocalDateTime fromDate = paymentSearchRequest.getFromDate();
         LocalDateTime toDate = paymentSearchRequest.getToDate();
 
-        if(paymentSearchRequest.getFromDate() == null)
-        {
+        if(paymentSearchRequest.getFromDate() == null){
             Date today = new Date(0);
             fromDate = LocalDateTime.ofInstant(today.toInstant(), ZoneId.systemDefault());
-
         }
-        if(paymentSearchRequest.getToDate() == null)
-        {
+        if(paymentSearchRequest.getToDate() == null){
             toDate = LocalDateTime.now();
         }
         Map<String, Object> params = new HashMap<>();
@@ -73,9 +73,9 @@ public class PaymentsManagerImpl extends SimpleJpaGenericRepository<Payment, Lon
 
         Page<Payment>
                 paymentsPage =
-                findAllByNamedQuery("Payments.findByVendorSites", params,
+                findAllByNamedQuery("Payment.findByVendorSites", params,
                         pageRequest);
         return paymentsPage.getContent();
-    }*/
+    }
 
 }

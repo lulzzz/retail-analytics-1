@@ -35,9 +35,5 @@ public class PaymentItemsResponse {
 
     private Float prepaymentAmount;
 
-    private Float creditAmount;
-
-    private Float tdsAmount;
-
     private String paymentType;
 }

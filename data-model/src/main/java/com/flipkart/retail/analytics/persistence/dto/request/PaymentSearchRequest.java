@@ -1,4 +1,4 @@
-package com.flipkart.retail.analytics.payments.dto.request;
+package com.flipkart.retail.analytics.persistence.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.dropwizard.jackson.JsonSnakeCase;
@@ -12,9 +12,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Created by kushagra.gupta on 11/04/17.
- */
 @Getter
 @Setter
 @JsonSnakeCase

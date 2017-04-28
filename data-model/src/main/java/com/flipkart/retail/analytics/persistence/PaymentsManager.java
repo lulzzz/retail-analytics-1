@@ -1,5 +1,6 @@
 package com.flipkart.retail.analytics.persistence;
 
+import com.flipkart.retail.analytics.persistence.dto.request.PaymentSearchRequest;
 import com.flipkart.retail.analytics.persistence.entity.Payment;
 import fk.sp.common.extensions.jpa.JpaGenericRepository;
 
@@ -10,5 +11,5 @@ public interface PaymentsManager extends JpaGenericRepository<Payment, Long> {
 
     public Optional<Payment> getLastPaymentByVs(List<String> vendorSiteIds);
     Optional<Payment>getPayments(String paymentId);
-   // List<Payment> getPaymentByVendorSites(PaymentSearch paymentSearchRequest);
+    List<Payment> getPaymentByVendorSites(PaymentSearchRequest paymentSearchRequest);
 }

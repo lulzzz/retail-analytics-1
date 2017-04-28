@@ -7,14 +7,10 @@ import com.flipkart.retail.analytics.persistence.entity.PaymentItem;
 
 import java.util.stream.Collectors;
 
-/**
- * Created by kushagra.gupta on 11/04/17.
- */
 public class PaymentToDtoMapper {
     public static PaymentItemsResponse getPaymentItemsResponse (PaymentItem paymentItems)
     {
         PaymentItemsResponse paymentItemsResponse = new PaymentItemsResponse();
-        paymentItemsResponse.setCreditAmount(paymentItems.getCreditAmount());
         paymentItemsResponse.setInvoiceAmount(paymentItems.getInvoiceAmount());
         paymentItemsResponse.setInvoiceDate(paymentItems.getInvoiceDate());
         paymentItemsResponse.setInvoiceDescription(paymentItems.getInvoiceDescription());
@@ -22,9 +18,7 @@ public class PaymentToDtoMapper {
         paymentItemsResponse.setItemNetAmount(paymentItems.getItemNetAmount());
         paymentItemsResponse.setPaymentType(paymentItems.getPaymentType());
         paymentItemsResponse.setPrepaymentAmount(paymentItems.getPrepaymentAmount());
-        paymentItemsResponse.setTdsAmount(paymentItems.getTdsAmount());
         paymentItemsResponse.setTxnNumber(paymentItems.getTxnNumber());
-
         return paymentItemsResponse;
     }
 

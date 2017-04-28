@@ -1,18 +1,17 @@
 package com.flipkart.retail.analytics.payments.services;
 
 
+import com.flipkart.retail.analytics.enums.ErrorCodes;
+import com.flipkart.retail.analytics.exception.AuthServiceException;
 import com.flipkart.retail.analytics.payments.dto.Mapper.PaymentToDtoMapper;
-import com.flipkart.retail.analytics.payments.dto.request.PaymentSearchRequest;
 import com.flipkart.retail.analytics.payments.dto.response.PaymentListResponse;
 import com.flipkart.retail.analytics.payments.dto.response.PaymentResponse;
 import com.flipkart.retail.analytics.payments.dto.response.VendorSitePaymentsDetails;
 import com.flipkart.retail.analytics.persistence.PaymentsManager;
+import com.flipkart.retail.analytics.persistence.dto.request.PaymentSearchRequest;
 import com.flipkart.retail.analytics.persistence.entity.Payment;
-import com.flipkart.retail.analytics.persistence.entity.views.VendorSiteYearlyPayment;
-import com.flipkart.retail.analytics.persistence.impl.PaymentsManagerImpl;
 import com.flipkart.retail.analytics.persistence.utility.Currencies;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,27 +45,21 @@ public class PaymentsService {
     }
 
     @Transactional
-    public PaymentResponse getPaymentsDetails(String paymentId) //throws AuthServiceException
-    {
+    public PaymentResponse getPaymentsDetails(String paymentId) throws AuthServiceException{
         Optional<Payment> payments = paymentsManager.getPayments(paymentId);
-
-        if(!payments.isPresent())
-        {
-           // throw new AuthServiceException(ErrorCodes.INVALID_PAYMENT_ID);
+        if(!payments.isPresent()){
+            throw new AuthServiceException(ErrorCodes.INVALID_PAYMENT_ID);
         }
-
         return PaymentToDtoMapper.getPaymentResponse(payments.get());
     }
 
-    /*@Transactional
-    public PaymentListResponse getPaymentFromVendorSites(PaymentSearchRequest paymentSearchRequest)
-    {
-
+    @Transactional
+    public PaymentListResponse getPaymentFromVendorSites(PaymentSearchRequest paymentSearchRequest){
         List<Payment> paymentsList = paymentsManager.getPaymentByVendorSites(paymentSearchRequest);
         PaymentListResponse paymentListResponse=new PaymentListResponse();
         paymentListResponse.setPayments(paymentsList.stream().map(PaymentToDtoMapper::getPaymentResponse).collect(Collectors.toList()));
         return paymentListResponse;
-    }*/
+    }
 
 
 }

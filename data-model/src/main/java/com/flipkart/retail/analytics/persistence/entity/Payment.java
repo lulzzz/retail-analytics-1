@@ -18,7 +18,11 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name="findLastPaymentByVsIds",
                 query = "select p from Payment p where p.vendorSiteId in (:vendorSiteIds) order by p.amount desc"),
-        @NamedQuery(name = "Payment.findByRefNumber", query = "SELECT p FROM Payment p WHERE p.refNumber = :refNumber")
+        @NamedQuery(name = "Payment.findByRefNumber", query = "SELECT p FROM Payment p WHERE p.refNumber = :refNumber AND p.status = 'ISSUED'"),
+        @NamedQuery(name = "Payment.findByVendorSites",query = "SELECT p FROM Payment p WHERE p.vendorSiteId IN (:vendorSiteIds)"
+                +"AND p.paiddate BETWEEN :fromDate AND :toDate And p.status = 'ISSUED' order by p.paiddate DESC "),
+        @NamedQuery(name = "Payment.findByVendorSites.count",query = "SELECT count(p) FROM Payment p WHERE p.vendorSiteId IN (:vendorSiteIds)"
+                +"AND p.paiddate BETWEEN :fromDate AND :toDate And p.status = 'ISSUED' ")
 })
 @Setter
 @Getter
@@ -27,9 +31,6 @@ import java.util.List;
 @AllArgsConstructor
 @JsonSnakeCase
 public class Payment extends AbstractEntity {
-
-    /*@Column(name = "paid_date")
-    private String paidDate;*/
 
 
     @Column(name = "ref_number")

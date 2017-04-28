@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
         @NamedQuery(name = "PaymentItem.findById", query = "SELECT p FROM PaymentItem p WHERE p.id = :id"),
         @NamedQuery(name = "PaymentItem.findByItemRefNumber", query = "SELECT p FROM PaymentItem "
                 + " p WHERE p.itemRefNumber = "
-                + ":itemRefNumber"),
+                + ":itemRefNumber AND p.payments.status = 'ISSUED'"),
 
 })
 @Getter
@@ -53,12 +53,6 @@ public class PaymentItem{
 
     @Column(name="prepayment_amount")
     private Float prepaymentAmount;
-
-    @Column(name="credit_amount")
-    private Float creditAmount;
-
-    @Column(name="tds_amount")
-    private Float tdsAmount;
 
     @Column(name="payment_type")
     private String paymentType;

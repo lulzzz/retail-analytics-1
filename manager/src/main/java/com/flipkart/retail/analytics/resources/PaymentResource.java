@@ -1,13 +1,13 @@
 package com.flipkart.retail.analytics.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.flipkart.retail.analytics.payments.dto.request.PaymentSearchRequest;
+import com.flipkart.retail.analytics.exception.AuthServiceException;
 import com.flipkart.retail.analytics.payments.dto.response.VendorSitePaymentsDetails;
 import com.flipkart.retail.analytics.payments.services.PaymentsService;
+import com.flipkart.retail.analytics.persistence.dto.request.PaymentSearchRequest;
 import com.google.inject.Inject;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -43,25 +43,21 @@ public class PaymentResource {
     @Path("/{payment_id}")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
-    public Response getPaymentsFromId(@NotNull @PathParam("payment_id") String paymentId)
-    {
-        return Response.ok(paymentsService.getPaymentsDetails(paymentId)).build();
-        /*try {
+    public Response getPaymentsFromId(@NotNull @PathParam("payment_id") String paymentId){
+        try {
             return Response.ok(paymentsService.getPaymentsDetails(paymentId)).build();
-        }
-        catch (AuthServiceException e)
-        {
+        }catch (AuthServiceException e){
             return Response.status(e.getHttpStatusCode()).entity(e.toJson()).build();
-        }*/
+        }
     }
 
-    /*@POST
+    @POST
     @Path("/search")
     @ApiOperation(value = "Get payment ids for a particular invoice id")
     @Timed
     public Response getPaymentDetailsFromVendorSites(@Valid PaymentSearchRequest paymentSearchRequest)
     {
         return Response.ok(paymentsService.getPaymentFromVendorSites(paymentSearchRequest)).build();
-    }*/
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.flipkart.retail.analytics.payments.services;
 
+import com.flipkart.retail.analytics.enums.ErrorCodes;
+import com.flipkart.retail.analytics.exception.AuthServiceException;
 import com.flipkart.retail.analytics.payments.dto.Mapper.PaymentToDtoMapper;
 import com.flipkart.retail.analytics.payments.dto.response.PaymentIdListResponse;
 import com.flipkart.retail.analytics.payments.dto.response.PaymentListResponse;
@@ -24,12 +26,10 @@ public class InvoiceService {
     private final PaymentItemsPersistenceManager paymentItemsPersistenceManager;
 
     @Transactional
-    public PaymentIdListResponse getPayments(String invoiceId) //throws AuthServiceException
-    {
+    public PaymentIdListResponse getPayments(String invoiceId) throws AuthServiceException{
         List<PaymentItem> paymentItemsList = paymentItemsPersistenceManager.getAllPaymentIds(invoiceId);
-        if(paymentItemsList.size() == 0)
-        {
-           // throw new AuthServiceException(ErrorCodes.INVALID_INVOICE_ID);
+        if(paymentItemsList.size() == 0){
+           throw new AuthServiceException(ErrorCodes.INVALID_INVOICE_ID);
         }
         PaymentIdListResponse paymentIdListResponse = new PaymentIdListResponse();
         paymentIdListResponse.setPaymentIds(paymentItemsList.stream().map(i -> i.getPayments().getRefNumber()).collect(Collectors.toList()));
@@ -37,12 +37,10 @@ public class InvoiceService {
     }
 
     @Transactional
-    public PaymentListResponse getPaymentsDetails(String invoiceId) //throws AuthServiceException
-    {
+    public PaymentListResponse getPaymentsDetails(String invoiceId) throws AuthServiceException{
         List<PaymentItem> paymentItemsList = paymentItemsPersistenceManager.getAllPaymentIds(invoiceId);
-        if(paymentItemsList.size() == 0)
-        {
-            //throw new AuthServiceException(ErrorCodes.INVALID_INVOICE_ID);
+        if(paymentItemsList.size() == 0){
+            throw new AuthServiceException(ErrorCodes.INVALID_INVOICE_ID);
         }
         List<Payment> paymentsList = paymentItemsList.stream().map(i->i.getPayments()).collect(Collectors.toList());
         PaymentListResponse paymentListResponse = new PaymentListResponse();

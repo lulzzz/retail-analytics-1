@@ -11,9 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
-/**
- * Created by kushagra.gupta on 11/04/17.
- */
 @Slf4j
 public class PaymentItemsPersistenceManagerImpl extends SimpleJpaGenericRepository<PaymentItem,Long>
         implements PaymentItemsPersistenceManager {
@@ -30,7 +27,6 @@ public class PaymentItemsPersistenceManagerImpl extends SimpleJpaGenericReposito
         log.debug("Fetching all the paymentsItems {}",invoiceId);
         Query query=getEntityManager().createNamedQuery("PaymentItem.findByItemRefNumber");
         query.setParameter("itemRefNumber",invoiceId);
-
         return query.getResultList();
     }
 
