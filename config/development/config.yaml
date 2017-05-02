@@ -2,7 +2,7 @@ dataSource:
   driverClass: com.mysql.jdbc.Driver
   user: root
   password:
-  url: jdbc:mysql://127.0.0.1/aggregation_pipeline_!?rewriteBatchedStatements=true
+  url: jdbc:mysql://127.0.0.1/aggregation_pipeline?rewriteBatchedState
   properties:
     charSet: UTF-8
   maxWaitForConnection: 1s

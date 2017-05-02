@@ -5,7 +5,7 @@ import simplejson as json
 import  MySQLdb
 from datetime import datetime, timedelta
 
-conn = MySQLdb.connect(host="localhost",user="root",passwd="", db="aggregation_pipeline")
+conn = MySQLdb.connect(host="10.85.119.225",user="analytics_user",passwd="password", db="aggregation_pipeline")
 c = conn.cursor()
 
 
@@ -57,7 +57,6 @@ def insertIntoPaymentItems(paymentId,paymentItem):
 def insertIntoPayments(paymentItem):
     paidDate = str(paymentItem["paymentDate"])
     paidDate = datetime.strptime(paidDate,'%d-%b-%y')
-    #print paymentItem["status"],paymentItem["paymentId"], "---------into insertion"
     queryforPayment = """INSERT INTO payments (paid_date,ref_number,amount,payment_method,payment_number,vendor_bank_name,vendor_site_id,vendor_bank_account_number,currency, status, vendor_branch_name, vendor_name, created_at) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW())"""
     c.execute(queryforPayment,(paidDate,paymentItem["paymentId"],paymentItem["paymentAmount"],paymentItem["paymentMethod"],paymentItem["paymentNumber"],paymentItem["vendorBankName"],paymentItem["vendorSiteId"],paymentItem["vendorBankAccountNumber"],paymentItem["currency"],paymentItem["status"],paymentItem["vendorBankBranchName"],paymentItem["vendorName"]))
 
@@ -65,7 +64,6 @@ def insertIntoPayments(paymentItem):
 def updatePayment(paymentItem,idForPayment):
     paidDate = str(paymentItem["paymentDate"])
     paidDate = datetime.strptime(paidDate,'%d-%b-%y')
-    #print paymentItem["status"],paymentItem["paymentId"],"-----------into updation"
     query ="""UPDATE payments set paid_date = %s , ref_number = %s , amount = %s, payment_method = %s, payment_number = %s , vendor_bank_name = %s , vendor_site_id = %s, vendor_bank_account_number = %s, currency = %s, status = %s, vendor_branch_name = %s, vendor_name = %s, updated_at = NOW() WHERE id = %s """
     c.execute(query,(paidDate,paymentItem["paymentId"],paymentItem["paymentAmount"],paymentItem["paymentMethod"],paymentItem["paymentNumber"],paymentItem["vendorBankName"],paymentItem["vendorSiteId"],paymentItem["vendorBankAccountNumber"],paymentItem["currency"],paymentItem["status"],paymentItem["vendorBankBranchName"],paymentItem["vendorName"],idForPayment))
 
@@ -101,7 +99,6 @@ def insertToPayments(paymentItem):
         except Exception as e:
             print("exception in creation into payment")
             print e.message, e.args
-            print("------------------------------------------------------------------------------------------------")
             return False
     else:
         try:
@@ -113,14 +110,12 @@ def insertToPayments(paymentItem):
         except Exception as e:
             print("exception in updation into payments")
             print e.message, e.args
-            print("----------------------------------------------------------------------------------------------")
             return False
     try:
         insertIntoPaymentItems(payment[0],paymentItem)
     except Exception as e:
         print("exception in creation into payment items")
         print e.message, e.args
-        print("------------------------------------------------------------------------------------------------")
         return False
     return True
 
@@ -155,7 +150,7 @@ def aggregatePayments(paymentItem,isStatusIssued):
         except Exception as e:
             print("exception in creation into aggregated payments")
             print e.message, e.args
-            print("------------------------------------------------------------------------------------------------")
+            #print("------------------------------------------------------------------------------------------------")
             return False
     else:
         try:
@@ -187,7 +182,7 @@ def getPaymentItems(paymentItems):
 
 
 def getFlatPayment(startDate,endDate):
-    uri = "http://10.85.185.171:27660/ofiFeedback/PaymentService/getFlatPaymentItemsForDateRange?fromDate=2015-03-01&toDate=2015-05-01"
+    uri = "http://10.85.185.171:27660/ofiFeedback/PaymentService/getFlatPaymentItemsForDateRange?fromDate="+startDate+"&toDate="+endDate
     try:
         response = requests.get(uri)
         if(response.status_code == 200):
