@@ -22,4 +22,10 @@ public class VendorSitePaymentsDetails {
 
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDateTime paymentDate;
+
+    private String refNumber;
+
+    private String paymentNumber;
 }
+
+

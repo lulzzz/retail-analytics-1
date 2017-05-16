@@ -38,6 +38,8 @@ public class PaymentsService {
                     .amount(payment.getAmount())
                     .currency(Currencies.valueOf(payment.getCurrency()))
                     .paymentDate(payment.getPaiddate())
+                    .refNumber(payment.getRefNumber())
+                    .paymentNumber(payment.getPaymentNumber())
                     .build();
 
         }
