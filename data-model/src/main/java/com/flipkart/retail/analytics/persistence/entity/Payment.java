@@ -17,7 +17,7 @@ import java.util.List;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name="findLastPaymentByVsIds",
-                query = "select p from Payment p where p.vendorSiteId in (:vendorSiteIds) order by p.amount desc"),
+                query = "select p from Payment p where p.vendorSiteId in (:vendorSiteIds) order by p.paiddate desc"),
         @NamedQuery(name = "Payment.findByRefNumber", query = "SELECT p FROM Payment p WHERE p.refNumber = :refNumber AND p.status = 'ISSUED'"),
         @NamedQuery(name = "Payment.findByVendorSites",query = "SELECT p FROM Payment p WHERE p.vendorSiteId IN (:vendorSiteIds)"
                 +"AND p.paiddate BETWEEN :fromDate AND :toDate And p.status = 'ISSUED' order by p.paiddate DESC "),
